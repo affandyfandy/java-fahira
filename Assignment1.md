@@ -14,15 +14,15 @@ In contrast to value types, reference types are instances of classes that are st
 <br>Example:<br>
 ```
 public static void increment(BigInteger val) {
-        // Increment the value by 1 and assign it back to val
-        val = val.add(BigInteger.ONE);
-    }
+    // Increment the value by 1 and assign it back to val
+    val = val.add(BigInteger.ONE);
+}
 
-    public static void main(String[] args) {
-        BigInteger initVal = new BigInteger("0");
-        increment(initVal);
-        System.out.println("Current value is " + initVal); // Output: Current value is 0
-    }
+public static void main(String[] args) {
+    BigInteger initVal = new BigInteger("0");
+    increment(initVal);
+    System.out.println("Current value is " + initVal); // Output: Current value is 0
+}
 ```
 
 In summary, the differences between value and reference types are shown in the table below

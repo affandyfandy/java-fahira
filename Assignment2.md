@@ -6,8 +6,8 @@ Encapsulation is the action of 'encapsulating' data (attributes) and methods int
 ### Inheritance
 Inheritance is the mechanism by which a new class (subclass or derived class) is created from an existing class (superclass or base class). The subclass is inheriting their superclass's attributes and methods. Subclass can reuse the properties and behaviors of their superclass and can also define their unique features.
 
-### Inheritance
-Polymorhism allows object of different classes to be treated as object of a common super class. It enables method-call binding, enhances extensibility by facilitating code reuse and allowing new classes to be added without modifying existing code, and overrides implementation.
+### Polymorphism
+Polymorphism allows object of different classes to be treated as object of a common super class. It enables method-call binding, enhances extensibility by facilitating code reuse and allowing new classes to be added without modifying existing code, and overrides implementation.
 
 ### Abstaction
 Abstraction is the process of representing the essential features of an object while hiding unnecessary details. Abstract classes serve as placeholders for actual implementation classes, defining behaviors that subclasses implement. This principle allows for the creation of general blueprints that can be specialized and adapted to various specific use cases.
