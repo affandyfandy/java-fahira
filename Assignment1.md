@@ -21,10 +21,45 @@ public static void increment(BigInteger val) {
 public static void main(String[] args) {
     BigInteger initVal = new BigInteger("0");
     increment(initVal);
-    System.out.println("Current value is " + initVal); // Output: Current value is 0
+    System.out.println("Current value is " + initVal); // Output: Current value is 1
+}
+```
+<br>Example for both in passing parameters<br>
+#### Value types
+```
+public static void main(String[] args) {
+    int x = 10;
+    System.out.println("Before method call: x = " + x);
+    
+    // Passing x to a method
+    modifyValue(x);
+    
+    System.out.println("After method call: x = " + x);
+}
+
+public static void modifyValue(int value) {
+    value = 20; // Modifying the parameter value
+    System.out.println("Inside method: value = " + value);
 }
 ```
 
+#### Reference Types
+```
+public static void main(String[] args) {
+    StringBuilder str = new StringBuilder("Hello");
+    System.out.println("Before method call: str = " + str);
+    
+    // Passing str to a method
+    modifyReference(str);
+    
+    System.out.println("After method call: str = " + str);
+}
+
+public static void modifyReference(StringBuilder builder) {
+    builder.append(" World!"); // Modifying the object referred to by builder
+    System.out.println("Inside method: builder = " + builder);
+}
+```
 In summary, the differences between value and reference types are shown in the table below
 #### Value Types vs. Reference Types in Java
 
@@ -33,6 +68,6 @@ In summary, the differences between value and reference types are shown in the t
 | **Storage Location** | Stack                            | Heap                              |
 | **Contain Data**     | Directly                         | Reference to data                 |
 | **Typical Usage**    | Primitive data, simple structures| Complex objects, collections      |
-| **Passing Parameters** | By value (copy of data)          | By reference (reference to data)  |
+| **Passing Parameters** | By value (copy of data)          | By value (reference to data)  |
 | **Initialization**   | Direct assignment                | Using constructors                |
 | **Performance**      | Faster (stack allocation)        | Slower (heap allocation)          |
