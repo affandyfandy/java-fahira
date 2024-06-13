@@ -47,7 +47,6 @@ public class LazySingleton {
 ```
 A thread-safe singleton means only one instance of a class is created and accessed safely by multiple threads simultaneously. There are few ways to create a thread-safe singleton. One of the effective way to create thread-safe singleton is using synchronize block inside the if loop.
 ```
-/**
 public class Singleton {
     private Singleton() {}
 

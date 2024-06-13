@@ -29,7 +29,7 @@ public class Main {
 When the main function is executed, it becomes the first item on the stack. Then, an instance of MyClass named obj is created. The value of obj is set to 5 and the name is set to "Old Name" by executing the next line. The modifyObject function is then called, pushing it onto the stack. Inside modifyObject, the value of obj is changed to 10, and the name is changed to "New Name". After modifyObject completes its execution, it's removed from the stack. Finally, the program prints:
 `obj.value and obj.name after modifyObject: 10 and New Name`
 
-![alt text](https://ibb.co.com/18WgHmP)
+![alt text](https://i.ibb.co.com/Tm3fzg7/Screen-Shot-2024-06-13-at-23-15-16.png)
 
 #### Cannot change the reference itself to point to a different object
 ```
@@ -51,4 +51,4 @@ public class Main {
 ```
 Firstly, the main function is executed, and it creates a new instance of MyClass. The instance's reference is assigned to obj. Next, the value attribute of obj is set to 5, and name is set to "Old Name". By calling the changeReference method, it passes the reference of obj. In the changeReference() method, the reference of the object is passed to the method parameter x. Then, a new object of MyClass is assigned to the local reference x. This change affects only the local variable x and does not modify the original reference obj in the main method. Then, the attributes of the new object referred to by x are modified. Finally, the program output is: `obj.value and obj.name after changeReference: 5 and New Name`
 
-![alt text](https://ibb.co.com/SQxjW9n)
+![alt text](https://i.ibb.co.com/z85Mj0R/Screen-Shot-2024-06-13-at-23-59-01.png)
