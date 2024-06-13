@@ -17,10 +17,12 @@ Singleton is a pattern that ensures the class instantiable only once throughout 
 In the eager initialization approach, the Singleton instance is created at the time of class loading. This approach is simple and thread-safe but it may create the instance even if it's not needed.
 ```
 public class EagerSingleton {
+    // The static final instance variable holds the single instance of the EagerSingleton class.
     private static final EagerSingleton instance = new EagerSingleton();
 
     private EagerSingleton() { }
 
+    // Returns the single instance of the EagerSingleton class.
     public static EagerSingleton getInstance() {
         return instance;
     }
@@ -34,6 +36,7 @@ public class LazySingleton {
 
     private LazySingleton() { }
 
+    // This is synchronized to ensure thread safety during instance creation.
     public static synchronized LazySingleton getInstance() {
         if (instance == null) {
             instance = new LazySingleton();
