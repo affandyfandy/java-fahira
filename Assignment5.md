@@ -1,6 +1,6 @@
 <h2>Thread-safe Singleton</h2>
 
-Singleton is a pattern that ensures the class instantiable only once throughout the code while providing a global point of access to that instance. Meanwhile, a thread-safe is a concept to ensures that only one instance of a class is created and accessed safely by multiple threads simultaneously.
+Singleton is a pattern that ensures the class instantiable only once throughout the code while providing a global point of access to that instance.
 
 ### Properties
 - Creational design pattern
@@ -45,3 +45,27 @@ public class LazySingleton {
     }
 }
 ```
+A thread-safe singleton means only one instance of a class is created and accessed safely by multiple threads simultaneously. There are few ways to create a thread-safe singleton. One of the effective way to create thread-safe singleton is using synchronize block inside the if loop.
+```
+/**
+public class Singleton {
+    private Singleton() {}
+
+    // If the instance is not already created, it will create one and return it.
+    public static Singleton getInstance() {
+        // Double-check if the instance is null to avoid unnecessary synchronization once the instance is created.
+        if (instance == null) {
+            // Synchronize on the class object to ensure only one thread enters this block at a time.
+            synchronized (Singleton.class) {
+                // Double-check again if the instance is still null within the synchronized block.
+                if (instance == null) {
+                    // Create a new instance of the Singleton class.
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+```
+In this approach, <b>double-check locking</b> is used inside the getInstance() method. The volatile keyword ensures that changes made to the instance variable are immediately visible to other threads, preventing any potential issues with thread caching.
