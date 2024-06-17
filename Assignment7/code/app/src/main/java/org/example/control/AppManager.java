@@ -13,7 +13,7 @@ import org.example.utils.FileUtils;
 
 public class AppManager {
     private static AppManager instance;
-    private final Scanner input;
+    private static Scanner input;
     private List<Employee> employees;
     
     private AppManager(){
@@ -72,7 +72,15 @@ public class AppManager {
         }
         List<Employee> importedEmployees = FileUtils.readEmployeeManual(path);
         employees.addAll(importedEmployees);
-        System.out.println("Imported " + importedEmployees.size() + " employees successfully.");
+        if (importedEmployees.size() == 0){
+            System.out.println("No employee imported from the file.");
+        }
+        else if (importedEmployees.size() == 1){
+            System.out.println("Imported " + importedEmployees.size() + " employee successfully.");
+        } 
+        else {
+            System.out.println("Imported " + importedEmployees.size() + " employees successfully.");
+        }
     }
 
     private void openCSVImportData(String path){
@@ -81,10 +89,14 @@ public class AppManager {
             return;
         }
         List<Employee> importedEmployees = FileUtils.readEmployeeFromCSV(path);
-        if (importedEmployees.isEmpty()) {
-            System.out.println("No employees imported from the file.");
-        } else {
-            employees.addAll(importedEmployees);
+        employees.addAll(importedEmployees);
+        if (importedEmployees.size() == 0){
+            System.out.println("No employee imported from the file.");
+        }
+        else if (importedEmployees.size() == 1){
+            System.out.println("Imported " + importedEmployees.size() + " employee successfully.");
+        } 
+        else {
             System.out.println("Imported " + importedEmployees.size() + " employees successfully.");
         }
     }
@@ -126,7 +138,7 @@ public class AppManager {
 
     private boolean checkUniqueness(String id){
         for (Employee employee : employees){
-            if (employee.getId().contains(id)){
+            if (employee.getId().equalsIgnoreCase(id)){
                 return false;
             }
         }
@@ -213,6 +225,7 @@ public class AppManager {
                 int cmd = Integer.parseInt(input.nextLine());
                 if (cmd == 0){
                     systemExit();
+                    input.close();
                 }
                 else if (cmd == 1){
                     importData();
