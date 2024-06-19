@@ -9,6 +9,10 @@ import java.io.IOException;
 
 public class App {
     public static void main(String[] args) {
+        start();
+    }
+
+    private static void start(){
         String directory = "src/lab1/";
         String inputFile = directory + "test1.txt";
         String outputFile = directory + "test2.txt";
