@@ -12,7 +12,7 @@ import java.util.Set;
 // Input: file data (.csv or .txt) and position key field for txt or key field name for csv
 // Output: write to new file with no duplication by key field
 
-public class Lab2 {
+public class RemoveElement {
     public static void main(String[] args) {
         StringBuilder sb = new StringBuilder();
         String inputFile = "src/lab2/input.txt";

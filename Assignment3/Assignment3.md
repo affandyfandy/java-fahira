@@ -1,7 +1,7 @@
 <h2>1. Research and explain try-with-resources</h2>
 Try-with-resources is a Java feature introduced in Java 7 that simplifies the management of resources that require closing, such as streams, files, sockets, and database connections. It ensures that each resource is closed at the end of the statement, even if an exception occurs, using a more concise and readable syntax.
 
-```
+```java
 try (ResourceType1 resource1 = initializeResource1();
      ResourceType2 resource2 = initializeResource2();
      // ... more resources as needed
@@ -31,15 +31,16 @@ If an exception is thrown during the execution of the try block, the resources a
 ### throw
 Throw is used to explicitly throw an exception from the code. It is used inside a method or block to throw an exception object explicitly when a certain condition occurs.
 
-```
+```java
 throw new ExceptionType("error message");
 ```
 Throw is followed by an instance of an exception (new ExceptionType) that is thrown during runtime to signal an exceptional condition. Itallows custom handling of exceptional situations within methods.
 
 ### throws
 Throws uses to specifies a method may throw one or more types of exceptions.It is used in method declarations to indicate that the method can throw exceptions of specific types.
-```
-void methodName() throws ExceptionType1, ExceptionType2, ... { ... }
+
+```java
+void methodName() throws ExceptionType1,     ExceptionType2, ... { ... }
 ```
 Throws is used in the method signature to declare that a method may throw exceptions of a specified type. It does not throw an exception itself but rather declares the type(s) of exceptions that might be thrown by the method. It also allows callers of the method to handle or propagate exceptions.
 

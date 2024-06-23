@@ -5,26 +5,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.ArrayList;
 
-class Employee {
-    private String name;
-    private String id;
-
-    public Employee(String id, String name){
-        this.name = name;
-        this.id = id;
-    }
-    
-    public String getId(){
-        return this.id;
-    }
-
-    public String getName(){
-        return this.name;
-    }
-}
-
-
-public class Lab3 {
+public class ConvertListToMap {
     static List<Employee> lstEmployees = new ArrayList<>();
     static Map<String, String> mapEmployees = new TreeMap<>();
 

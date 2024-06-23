@@ -10,7 +10,7 @@ There are 4 conditions that can occurs the deadlock
 - <b>Circular Wait</b>: There exists a circular chain of threads waiting for resources from each other.
 
 ### Example
-```
+```java
 public static Object lock1 = new Object();
 public static Object lock2 = new Object();
 

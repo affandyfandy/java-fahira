@@ -2,7 +2,7 @@
 When we implement 2 interfaces that have the same default method (same method name and parameters), it can lead to a <b>multiple inheritance problem</b> conflict. This is because the compiler cannot determine which interface's default method implementation should be used by default in the implementing class.
 
 #### Example
-```
+```java
 public interface FirstInterface{
     void firstMethod(String string);
     default void log(String string){

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Lab1 {
+public class RetrieveElement {
     static final Scanner in = new Scanner(System.in);
     public static void main(String[] args) {
         ArrayList<Integer> numbers = new ArrayList<>();
