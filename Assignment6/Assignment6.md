@@ -12,7 +12,7 @@ A stream in Java is simply a wrapper around a information source, permitting us 
 - <b>Thread Safety</b>: Ensure that the operations applied to elements in parallel streams are thread-safe, especially if the stream source or operations involve mutable state.
 
 ### Example
-```
+```java
 List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         
 // Sequential stream

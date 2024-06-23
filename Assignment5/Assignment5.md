@@ -177,7 +177,7 @@ HashSet is a collection that doesn't allow duplicate elements. To recognize dupl
 2. **Collision handling**, if multiple objects produce the same hash code (hash code collision), HashSet uses the equals() method to determine if the objects are actually equal. It checks if any object already in the set has the same hash code and if equals() returns true when comparing the new object with objects in the same bucket.
 
 ### Example
-Refer to Employee class [this code](), we want to add new employee and add it to HashSet<> employees.
+Refer to Employee class, we want to add new employee and add it to HashSet<> employees.
 ```java
 public class Main{
     public static void main(String[] args){
@@ -317,6 +317,7 @@ for (int i = 0; i < 10; i++) {
 ```
 
 3. **Use Iterator**
+
 If iterating over a collection while allowing modifications, use concurrent collections or ensure that modifications are done through the iterator's own methods (remove() or add() for ListIterator).
 ```java
 ListIterator<String> listIterator = data.listIterator();
