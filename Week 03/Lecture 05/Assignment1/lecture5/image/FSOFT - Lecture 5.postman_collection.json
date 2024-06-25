@@ -1,0 +1,137 @@
+{
+	"info": {
+		"_postman_id": "f284d30e-d010-4844-a8cf-de88ea0a812a",
+		"name": "FSOFT / Lecture 5",
+		"description": "The documentation for the result testing demo project lecture 5 week 3 FPT Internship Indonesia.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23473846"
+	},
+	"item": [
+		{
+			"name": "Get All Contact",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/contact",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"contact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Contact by Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/contact/5d36942d-94e6-4f70-9106-8bd88c445585",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"contact",
+						"5d36942d-94e6-4f70-9106-8bd88c445585"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add New Contact",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"1d68d820-f085-45e5-b599-d00ddew5468b\",\n    \"name\": \"Kelly Wakasa\",\n    \"dob\": \"2000-12-14T17:00:00.000+00:00\",\n    \"age\": 24,\n    \"email\": \"kelly@gamil.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/contact",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"contact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Contact",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"1d68d820-f085-45e5-b599-d00ddew5468b\",\n    \"name\": \"Amartha\",\n    \"dob\": \"2000-12-14T17:00:00.000+00:00\",\n    \"age\": 20,\n    \"email\": \"amartha@gamil.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/contact/1d68d820-f085-45e5-b599-d00ddew5468b",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"contact",
+						"1d68d820-f085-45e5-b599-d00ddew5468b"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete contact",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/contact/1d68d820-f085-45e5-b599-d00ddew5468b",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"contact",
+						"1d68d820-f085-45e5-b599-d00ddew5468b"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

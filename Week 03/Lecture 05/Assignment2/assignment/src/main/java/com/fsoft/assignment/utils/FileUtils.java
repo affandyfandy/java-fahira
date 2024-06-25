@@ -1,10 +1,14 @@
 package com.fsoft.assignment.utils;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fsoft.assignment.model.Employee;
 import com.opencsv.CSVReader;
@@ -38,9 +42,18 @@ public class FileUtils {
         return employees;
     }
 
-    public static List<Employee> readEmployeeFromCSV(String filePath){
+	private static File convertMultiPartToFile(MultipartFile file) throws IOException {
+		File convFile = new File(file.getOriginalFilename());
+		FileOutputStream fos = new FileOutputStream(convFile);
+		fos.write(file.getBytes());
+		fos.close();
+		return convFile;
+	}
+
+    public static List<Employee> readEmployeeFromCSV(MultipartFile multipartFile) throws IOException{
+        File file = convertMultiPartToFile(multipartFile);
         List<Employee> employees = new ArrayList<>();
-        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
             String[] values;
             boolean isFirstLine = true; 
             while ((values = reader.readNext()) != null) {
@@ -63,16 +76,4 @@ public class FileUtils {
         }
         return employees;
     }
-
-    // public static void writeEmployeesToCSV(List<Employee> employees) {
-    //     try (FileWriter writer = new FileWriter("employees.csv")) {
-    //         writer.append("ID,Name,DateOfBirth,Address,Department\n");
-    //         for (Employee employee : employees) {
-    //             writer.append(employee.print()).append("\n");
-    //         }
-    //         System.out.println("Employees exported to CSV successfully.");
-    //     } catch (IOException e) {
-    //         System.out.println("Error writing to CSV file: " + e.getMessage());
-    //     }
-    // }
 }

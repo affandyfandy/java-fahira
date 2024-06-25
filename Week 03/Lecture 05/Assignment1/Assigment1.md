@@ -25,7 +25,6 @@ See [application.properties](lecture5/src/main/resources/application.properties)
 1. **Get all contact contact**
 ![get-all-contact.png](lecture5/image/get-all-contact.png)
 
-
 2. **Find contact by id**
 ![find-contact.png](lecture5/image/find-contact.png)
 
