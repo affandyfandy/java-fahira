@@ -1,7 +1,6 @@
 package com.fsoft.assignment.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,18 +106,10 @@ public class EmployeeController {
     // query department
     @GetMapping("/department")
     public ResponseEntity<List<Employee>> filterByDepartmnet(@RequestParam("query") String dept) {
-        List<Employee> listEmployee = employeeRepository.findAll();
-        List<Employee> listEmployeeDept = new ArrayList<>();
-        for (Employee e : listEmployee){
-            if (e.getDepartment().equals(dept)){
-                listEmployeeDept.add(e);
-            }
-        }
-        if (listEmployeeDept.isEmpty()){
+        List<Employee> listEmployee = employeeRepository.findByDepartment(dept);
+        if (listEmployee.isEmpty()){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(listEmployeeDept);
+        return ResponseEntity.ok(listEmployee);
     }
-    
-    
 }
