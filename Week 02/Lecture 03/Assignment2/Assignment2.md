@@ -66,3 +66,6 @@ methods.
 | **Extends/Implements**   | Extended by a class (single inheritance)                     | Implemented by a class (multiple inheritance)                   |
 | **Purpose**              | Provides a base implementation and structure for subclasses | Defines a contract for what classes can do (promotes polymorphism) |
 | **Usage**                | Represents "is-a" relationship                              | Represents "can-do" relationship                               |      
+
+Based on purposes, **abstract class** is used when we want to provide a common behavior or state for a base class that multiple derived classes can inherit from. It also serves as a **blueprint** for other classes and can contain both fully implemented method and abstract methods (method without a body, meant to be overridden by derived classes). On the other side, **interface** define a contract for classes to follow. It specifies a set of methods that a class implementing the interface must provide. Interfaces are used to achieve abstraction and provide a way to achieve multiple inheritance in languages that do not support it directly (like Java).
+

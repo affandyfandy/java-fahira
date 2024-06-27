@@ -1,12 +1,17 @@
 id,name,age,city
 1,John Doe,25,New York
 1,John Doe,25,New York
+1,John Doe,25,New York
 3,Bob Johnson,22,Chicago
+4,Amy Brown,28,San Francisco
+4,Amy Brown,28,San Francisco
 4,Amy Brown,28,San Francisco
 5,Michael Lee,35,Boston
 6,Sarah Davis,26,Seattle
 6,Sarah Davis,26,Seattle
 7,David Wilson,29,Dallas
+8,Emily Moore,27,Miami
+9,James Taylor,32,Atlanta
 8,Emily Moore,27,Miami
 9,James Taylor,32,Atlanta
 10,Linda Anderson,31,Houston

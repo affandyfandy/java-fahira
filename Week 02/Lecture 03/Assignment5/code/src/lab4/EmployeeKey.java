@@ -8,4 +8,12 @@ public class EmployeeKey {
         this.id = id;
         this.department = department;
     }
+
+    @Override
+    public String toString(){
+        return "EmployeeKey{" +
+                "id=" + id +
+                ", department='" + department + '\'' +
+                '}';
+    }
 }

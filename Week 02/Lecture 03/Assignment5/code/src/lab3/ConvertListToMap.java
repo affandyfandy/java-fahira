@@ -10,10 +10,10 @@ public class ConvertListToMap {
     static Map<String, String> mapEmployees = new TreeMap<>();
 
     private static String createEmployee(){
-        Employee manager = new Employee("MNG_01", "Alex");
-        Employee developer = new Employee("DEV_02", "Kollin");
-        Employee admin = new Employee("ADM_10", "Luke");
-        Employee qa = new Employee("QA_09", "Amber");
+        Employee manager = new Employee("MNG_01", "Alex", "Sales");
+        Employee developer = new Employee("DEV_02", "Kollin", "Marketing");
+        Employee admin = new Employee("ADM_10", "Luke", "IT Engineering");
+        Employee qa = new Employee("QA_09", "Amber", "Public Relations");
 
         lstEmployees.add(manager);
         lstEmployees.add(developer);
