@@ -15,17 +15,30 @@ The first normal form defines the basic properties of a table:
 1. Eliminate composite attributes, multivalued attributes, and nested relations.
 2. Each column should contain atomic (indivisible) values.
 
+**Example**
+
+![image](https://i.ibb.co.com/C55cZSq/Screen-Shot-2024-06-28-at-12-40-34.png)
+![answer](https://i.ibb.co.com/xJk1bN6/Screen-Shot-2024-06-28-at-12-41-17.png)
+
 #### 2NF (All attributes depend on the whole key)
 The second normal form builds on the first:
 1. Ensures that all attributes are fully functionally dependent on the primary key.
 2. No non-key attribute should be dependent on only a part of the primary key.
 3. Decompose tables to separate entities that fulfill these criteria.
 
+**Example**
+
+![image](https://i.ibb.co.com/bBb4S8r/Screen-Shot-2024-06-28-at-12-38-50.png)
+
 #### 3NF (All attributes depend on nothing but the key)
 The third normal form further refines the structure:
 1. Eliminates transitive dependencies where a non-key attribute depends on another non-key attribute.
 2. Every non-key attribute must be functionally dependent on the primary key.
 3. Tables are decomposed into smaller tables to achieve these dependencies.
+
+**Example**
+
+![image](https://i.ibb.co.com/27YnJtH/Screen-Shot-2024-06-28-at-12-34-49.png)
 
 **Notes:**
 - For FD X -> Y and Y -> Z, with X as the primary key, we consider this a problem only if Y is not a candidate key.
