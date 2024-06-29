@@ -29,56 +29,84 @@ INSERT INTO invoice_detail (quantity, product_id, product_price, invoice_id, amo
     (2, 1, 100.99, 3, 201.98),
     (1, 2, 12.49, 3, 12.49); 
 
+-- CREATE VIEW customer_product_list
+CREATE VIEW customer_product_list AS
+SELECT
+    c.id AS customer_id,
+    c.name AS customer_name,
+    p.id AS product_id,
+    p.name AS product_name,
+    id.quantity AS quantity,
+    id.amount AS amount,
+    i.created_date AS created_date
+FROM
+    invoice_detail id
+JOIN
+    invoice i ON id.invoice_id = i.id
+JOIN
+    customer c ON i.customer_id = c.id
+JOIN
+    product p ON id.product_id = p.id;
+
+-- CREATE FUNCTION calculate_revenue_by_cashier
+DROP FUNCTION IF EXISTS calculate_revenue_by_cashier;
+
+DELIMITER //
+CREATE FUNCTION calculate_revenue_by_cashier(cashier_id INT) RETURNS DECIMAL(10, 2)
+BEGIN
+    DECLARE total_revenue DECIMAL(10, 2);
+
+    SELECT COALESCE(SUM(id.amount), 0.00)
+    INTO total_revenue
+    FROM invoice_detail id
+    JOIN invoice i ON id.invoice_id = i.id
+    WHERE i.cashier_id = cashier_id;
+
+    RETURN total_revenue;
+
+END //
+DELIMITER ;
+
 -- CREATE TABLE REVENUE_REPORT
 CREATE TABLE revenue_report (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    year INT NOT NULL,
-    month INT NULL,
-    day INT NULL,
-    amount DECIMAL(10, 2) NOT NULL
+    year INT,
+    month INT,
+    day INT,
+    amount DECIMAL(10, 2)
 );
 
 -- Procedure to calculate and store daily revenue
 DELIMITER //
-CREATE PROCEDURE calculate_and_store_daily_revenue(day_of_year INT)
+CREATE PROCEDURE calculate_daily_revenue(day DATE)
 BEGIN
     DECLARE day_revenue DECIMAL(10, 2);
-    
     SELECT SUM(amount) INTO day_revenue
     FROM invoice
-    WHERE DAYOFYEAR(created_date) = day_of_year;
-    
+    WHERE DATE(created_date) = day;
     INSERT INTO revenue_report (year, month, day, amount)
-    VALUES (YEAR(CURDATE()), NULL, day_of_year, day_revenue);
+    VALUES (YEAR(day), MONTH(day), DAY(day), day_revenue);
 END//
-DELIMITER ;
 
 -- Procedure to calculate and store monthly revenue
-DELIMITER //
-CREATE PROCEDURE calculate_and_store_monthly_revenue(month_of_year INT)
+CREATE PROCEDURE calculate_monthly_revenue(month DATE)
 BEGIN
     DECLARE month_revenue DECIMAL(10, 2);
-    
     SELECT SUM(amount) INTO month_revenue
     FROM invoice
-    WHERE MONTH(created_date) = month_of_year AND YEAR(created_date) = YEAR(CURDATE());
-    
+    WHERE YEAR(created_date) = YEAR(month) AND MONTH(created_date) = MONTH(month);
     INSERT INTO revenue_report (year, month, day, amount)
-    VALUES (YEAR(CURDATE()), month_of_year, NULL, month_revenue);
+    VALUES (YEAR(month), MONTH(month), NULL, month_revenue);
 END//
-DELIMITER ;
 
 -- Procedure to calculate and store yearly revenue
-DELIMITER //
-CREATE PROCEDURE calculate_and_store_yearly_revenue(year_of_year INT)
+CREATE PROCEDURE calculate_yearly_revenue(IN report_year INT)
 BEGIN
     DECLARE year_revenue DECIMAL(10, 2);
-    
-    SELECT SUM(amount) INTO year_revenue
+    SELECT COALESCE(SUM(amount), 0) INTO year_revenue
     FROM invoice
-    WHERE YEAR(created_date) = year_of_year;
-    
+    WHERE YEAR(created_date) = report_year;
     INSERT INTO revenue_report (year, month, day, amount)
-    VALUES (year_of_year, NULL, NULL, year_revenue);
+    VALUES (YEAR(year), NULL, NULL, year_revenue);
 END//
 DELIMITER ;
