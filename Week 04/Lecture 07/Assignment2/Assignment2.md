@@ -21,24 +21,176 @@ Setter injection provides setter methods for the dependencies of a class, and ca
 - There is no guarantee that all required dependencies will be set befor the object is used so it will less suitable for immutable object
 
 ### Field Injection
-Field injection involves using annotations, such as @Autowired, to mark the field that need to be injected with dependencies. 
+Field injection involves injecting dependencies directly into class fields.
 #### Pros
 - We can avoid writing constructors or setters for the dependencies, and let a framework or a container handle the injection for you.
 - Make code concise and simple as we only need to declare the fields and annotate them
 #### Cons
-- Creates a risk of `NullPointerExceptio` if dependencies aren’t correctly initialized
+- Leads to tight coupling between classes, making it harder to refactor or modify dependencies.
 - Unable to create immutable classes
+
+Based on those pros and cons of field injection, setter injection, and constructor injection, **constructor injection** is the best practice among them. In the first look, field injection might look like the best choice, but it will be immature. Setter injection makes the class mutable after instantiation, which can lead to issues with state consistency if setters are called at inappropriate times. In contrast, constructor injection might be looking old school, but promises a more testable and fail-proof way of injecting dependency.
 
 <h2>Annotations</h2>
 
-1. **@Configuration**
-2. **@Bean**
-3. **@ComponentScan**
-4. **@Component**
-5. **@Service**
-6. **@Repository**
-7. **@Autowired**
-8. **@Scope**
-9. **@Qualifier**
-10. **@PropertySource, @Value**
-11. **@PreDetroy, @PostConstruct**
+<h3>@Configuration</h3>
+
+**Purpose:** Indicates that a class declares one or more @Bean methods and may be processed by the Spring container to generate bean definitions and service requests for those beans at runtime.
+
+**Example:** 
+```java
+@Configuration
+public class AppConfig {
+    @Bean
+    public EmailService emailService() {
+        return new EmailServiceImpl();
+    }
+}
+```
+</h3>@Bean</h3>
+
+**Purpose:** To specify a method returns a bean to be managed by Spring context. Spring Bean annotation is usually declared in Configuration classes methods.
+
+**Example:**
+```java
+    @Bean
+    public EmailService emailService() {
+        return new EmailServiceImpl();
+    }
+```
+<h3>@ComponentScan</h3>
+
+**Purpose:** To specify the packages that we want to be scanned and create beans.
+
+**Example:**
+```java
+@Configuration
+@ComponentScan(basePackages = "com.lecture7.assignment2")
+public class AppConfig {}
+```
+<h3>@Component</h3>
+
+**Purpose:** It is used to denote a class as a Component. It is allows Spring to detect and create beans to the class with annotation @Component automatically. Spring framework provides three other specific annotations to be used when marking a class as a Component.
+1. `@Service` to specifies that the class holds some business logic or services in it. 
+2. `@Repository` to specifies that the class is dealing with CRUD operations.
+3. `@Entity` to specifies that the class is responsible to handle user requests and returning the appropriate responses to user.
+
+**Example:**
+```java
+@Component
+public class Employee {
+}
+```
+
+<h3>@Service</h3>
+
+**Purpose:** It is used with classes that provide some businees functionalities and it can be applied only to classes.
+
+**Example:**
+```java
+@Service
+public interface EmailService{
+    void send(Email email);
+}
+```
+<h3>@Repository</h3>
+
+**Purpose:** It is used to indicate that the class provides the mechanism for storage, retrieval, update, delete, and search operation on objects.
+
+**Example:**
+```java
+@Repository
+public interface EmployeeRepository extends JpaRepository<Employee, String>{
+}
+```
+<h3>@Autowired</h3>
+
+**Purpose:** It marks a Constructor, Setter, Propertis, or Config() method as to be autowired that is injecting beans at runtime by Spring Dependency Injection mechanism.
+
+**Example:**
+```java
+public class EmployeeService {  
+    @Autowired
+    private EmailService emailService;
+}
+```
+
+<h3>@Scope</h3>
+
+**Purpose:** It is used to define a bean's scope. It can only be used on the concrete bean class (for annotated components) or the factory method (for @Bean methods).
+
+**Example:**
+```java
+@Bean
+@Scope("singleton")
+public Person personSingleton() {
+    return new Person();
+}
+```
+<h3>@Qualifier</h3>
+
+**Purpose:** It is useed to eliminate the issue of which bean needs to be injected when Spring finds multiple beans of the same type.
+
+**Example:**
+```java
+public class EmailService {
+    @Autowired
+    @Qualifier("emailFormatter")
+    private Formatter formatter;
+}
+...
+@Component
+@Qualifier("emailFormatter")
+public class EmailFormatter implements Formatter {
+}
+```
+
+<h3>@PropertySource, @Value</h3>
+
+**Purpose:** @PropertySource is used to provide properties file to Spring Environment. This annotation is used with @Configuration classes. Meanwhile, @Value can be used for injecting values into fields in Spring-managed beans, and it can be applied at the field or constructor/method parameter level.
+
+**Example:**
+```java
+@Configuration
+@PropertySource("classpath:db.properties")
+@PropertySource("classpath:root.properties")
+public class DBConfiguration {
+
+    @Autowired
+    Environment env;
+
+    @Value("${APP_NAME}")
+    private String appName;
+
+    @Value("${DB_DRIVER_CLASS}")
+    private String dbDriverClass;
+
+    @Value("${DB_URL}")
+    private String dbUrl;
+
+    @Value("${DB_USERNAME}")
+    private String dbUsername;
+
+    @Value("${DB_PASSWORD}")
+    private String dbPassword;
+}
+```
+Using the @PropertySource annotation allows us to work with values from properties files with the @Value annotation.
+
+<h3>@PreDestroy, @PostConstruct</h3>
+
+**Purpose:** @PostConstruct is called just after the initialization of bean properties to populating a database (most common purpose). @PreDestroy is called just before Spring removes our bean from the application context to release resources or perform other cleanup tasks, such as closing a database connection, before the bean gets destroyed. Basically, those are another use of Bean lifecycle management. Apart from using initMethod and destroyMethod, we can use @PreDestroy and @PostConstruct for the same purpose.
+
+**Example:**
+```java
+public class Television {
+    @PostConstruct
+    public void turnOn(){
+        System.out.println("Turn on the television...");
+    }
+
+    @PreDestroy
+    public void turnOff(){
+        System.out.println("Close all programs...");
+    }
+}

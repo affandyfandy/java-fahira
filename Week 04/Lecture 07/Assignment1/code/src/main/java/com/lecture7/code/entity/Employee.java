@@ -1,4 +1,6 @@
-package com.lecture7.code;
+package com.lecture7.code.entity;
+
+import com.lecture7.code.EmployeeWork;
 
 public class Employee {
 
@@ -6,6 +8,8 @@ public class Employee {
     private String name;
     private int age;
     private EmployeeWork employeeWork;
+
+    public Employee() {}
 
     public Employee(String id, String name, int age, EmployeeWork employeeWork){
         this.id = id;

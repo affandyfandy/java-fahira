@@ -18,36 +18,31 @@ In the original form, the beans are declared in an XML file as shown below, or y
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<beans
-    xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans 
-                        https://www.springframework.org/schema/beans/spring-beans.xsd 
-                        http://www.springframework.org/schema/context 
-                        http://www.springframework.org/schema/context/spring-context.xsd"> 
-    <bean id="employeeWork" class="com.lecture7.code.EmployeeWork"/>
-    <bean name="employee" class="com.lecture7.code.Employee">
-        <property name="id">
-            <value>MNG_01</value>
-        </property>
-        <property name="name">
-            <value>Keiko</value>
-        </property>
-        <property name="age">
-            <value>25</value>
-        </property>
-        <property name="employeeWork" ref="employeeWork"/>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd 
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context.xsd"> 
+
+    <bean id="employee" class="com.lecture7.code.Employee">
+        <constructor-arg name="id" value="MNG_001"/>
+        <constructor-arg name="name" value="Keiko"/>
+        <constructor-arg name="age" value="35"/>
+        <constructor-arg>
+            <bean class="com.lecture7.code.EmployeeWork"/>
+        </constructor-arg>
     </bean>
 </beans>
 ```
-The `beans.xml` configures and instantiates the employeeWork bean from the `EmployeeWork.java` class and employee bean from the `Employee.java` class. When instantiating the employee bean, an Employee object is created with predefined properties. To utilize this configuration, beans.xml is called inside the main method.
+The `beans.xml` configures and instantiates the employeeWork bean from the `EmployeeWork.java` class and employee bean from the `Employee.java` class. When instantiating the employee bean, an Employee object is created with predefined properties. To utilize this configuration, `beans.xml` is called inside the main method.
 
 ```java
 public static void main(String[] args) {
     SpringApplication.run(CodeApplication.class, args);
     ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
-    Employee employee = context.getBean("employee", Employee.class);
+    Employee employee = context.getBean(Employee.class);
     employee.working();
 }
 ```
@@ -57,8 +52,13 @@ My Name is: Keiko
 Working...
 ``` 
 
-If we change from XML-based bean declaration to Java-based configuration, the program's output remains unchanged, but we implement it differently.
-1. Create a new Java class annotated with `@Configuration`. This class will serve as the replacement for `beans.xml` file.
+If we want to change from XML bean declaration to Java configuration, we can create new file (example AppConfig) to set the configuration of the beans. Before stated the class, we use annotation `@Configuration`. `@Configuration` is a class-level annotation indicating that an object is a source of beans definitions. `@Configuration` classes declare beans through `@Beans` annotated methods.
+
+The `@Bean` annotation is used to indicate that a method instantiates, configures, and initializes a new object to be managed by the Spring IoC container. In this case, `@Bean` will plays same role as </bean/> in XML configuration.
+
+Hereby the implementation of Java configuration for employee and employee work.
+
+<h3>1. Create a new Java class annotated with `@Configuration` inside the config folder</h3>
 
 ```java
 @Configuration
@@ -76,17 +76,45 @@ public class AppConfig {
 }
 ```
 
-The `AppConfig.java` will replace bean declaration on `beans.xml`. The class will instantiated new employee object and employee work.
+`AppConfig` is the application configuration class. It is decorated with the `@Configuration` annotation, which is a specialization of the `@Component`. The `AppConfig.java` will replace bean declaration on `beans.xml`.
 
-2. Adjust the declaration of employee object in main method.
+<h3>2. Adjust the declaration ApplicationContext in main method</h3>
 
-Previously, it retrieved the beans like this.
+Previously, it declared like this.
 ```java
-Employee employee = context.getBean("employee", Employee.class);
+ApplicationContext context = new AnnotationConfigApplicationContext("beans.xml");
 ```
-Since we no longer use XML, we can either eliminate the "employee" bean identifier or modify the syntax as follows:
+Since we no longer use XML, we can replace the `beans.xml` to the new class AppConfig.
 ```java
-Employee employee = context.getBean(Employee.class);
+ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 ```
 In summary, creating a `@Configuration` class (AppConfig) to define beans is a more modern and flexible approach compared to XML-based configuration (beans.xml). It provides type safety, easier refactoring, and better integration with Java-based Spring features.
 
+<h2>Setter based dependency injection and field dependency for Employee app</h2>
+
+### Setter Injection
+Setter injection can be implemented by creating a setter method inside the Employee class and adding a new constructor for Employee with no parameter.
+```java
+public void Employee(){}
+
+public void setEmployeeWork(EmployeeWork employeeWork){
+    this.employeeWork = employeeWork;
+}
+...
+
+```
+
+### Field Injection
+To implement field injection in Employee class, we can add `@Autowired` above the EmployeeWork field in the Employee class.
+```java
+public class Employee {
+
+    private String id;
+    private String name;
+    private int age;
+
+    @Autowired
+    private EmployeeWork employeeWork;
+...
+}
+```
