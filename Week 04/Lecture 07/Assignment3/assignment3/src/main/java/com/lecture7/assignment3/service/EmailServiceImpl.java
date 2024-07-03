@@ -1,9 +1,8 @@
-package com.lecture7.assignment2.service;
-
-import com.lecture7.assignment2.entity.Email;
-
+package com.lecture7.assignment3.service;
 
 import org.springframework.stereotype.Service;
+
+import com.lecture7.assignment3.entity.Email;
 
 @Service
 public class EmailServiceImpl implements EmailService{
@@ -15,5 +14,7 @@ public class EmailServiceImpl implements EmailService{
         receiver.getListAddressedEmail().add(email);
         sender.getListSentEmail().add(email);
         email.setIsDelivered(true);
+        System.out.printf("Email from %s to %s has been sent successfully...\n",
+                    email.getSender().getName(), email.getReceiver().getName());
     }
 }

@@ -20,8 +20,8 @@ public class Assignment2Application {
 
 	@Bean
 	CommandLineRunner run(EmployeeServiceConstructor employeeServiceConstructor, 
-						EmployeeServiceField employeeServiceField, 
-						EmployeeServiceSetter employeeServiceSetter){
+					EmployeeServiceField employeeServiceField, 
+					EmployeeServiceSetter employeeServiceSetter){
 		return args -> {
 			var e1 = new Employee("MNG_01", "Luke", 40);
 			var e2 = new Employee("DEV_01", "Nadia", 29);

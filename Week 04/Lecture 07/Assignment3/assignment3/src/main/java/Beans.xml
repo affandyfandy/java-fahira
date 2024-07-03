@@ -1,0 +1,16 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<beans xmlns = "http://www.springframework.org/schema/beans"
+   xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation = "http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+   <!-- Singleton -->
+   <bean id = "emailService" class = "com.lecture7.assignment3.service.EmailServiceImpl" scope = "singleton">
+   </bean>
+
+   <!-- Prototype -->
+   <bean id="employeeService" class="com.lecture7.assignment3.service.EmployeeService" scope="prototype">
+      <constructor-arg ref="emailService" />
+   </bean>
+</beans>

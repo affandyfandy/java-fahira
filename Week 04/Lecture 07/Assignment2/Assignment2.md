@@ -31,6 +31,130 @@ Field injection involves injecting dependencies directly into class fields.
 
 Based on those pros and cons of field injection, setter injection, and constructor injection, **constructor injection** is the best practice among them. In the first look, field injection might look like the best choice, but it will be immature. Setter injection makes the class mutable after instantiation, which can lead to issues with state consistency if setters are called at inappropriate times. In contrast, constructor injection might be looking old school, but promises a more testable and fail-proof way of injecting dependency.
 
+<h2>Circular Dependency Injection</h2>
+
+A circular dependency happens when a bean A depends on bean B and vice versa. The common condition of dependency injection must be like this:
+
+<h3>Bean A → Bean B → Bean C</h3>
+
+Spring will create bean C, then create bean B (and inject bean C into it), then create bean A (and inject bean B into it). But, when it comes to circular dependency injection, the condition will be like this.
+
+<h3>Bean A → Bean B → Bean A</h3>
+
+Spring can't decide which of the beans should be created first since they depend on one another. In these cases, Spring will raise a `BeanCurrentlyInCreationException` while loading context. It happens in Spring when using **constructor injection**. If we use other types of injections, we shouldn’t have this problem since the dependencies will be injected when they are needed and not on the context loading.
+
+### Example
+```java
+@Component
+public class DependencyA {
+
+    private DependencyB circB;
+
+    @Autowired
+    public DependencyA(DependencyB circB) {
+        this.circB = circB;
+    }
+}
+```
+```java
+@Component
+public class DependencyB {
+
+    private DependencyA circA;
+
+    @Autowired
+    public DependencyB(DependencyA circA) {
+        this.circA = circA;
+    }
+}
+```
+If we run the program, it will return like this.
+```java
+BeanCurrentlyInCreationException: Error creating bean with name 'circularDependencyA':
+Requested bean is currently in creation: Is there an unresolvable circular reference?
+```
+
+### Solution
+We can implement several ways to deal with circular dependency problem.
+#### 1. Use @Lazy
+A simple way to break the cycle is by telling Spring to initialize one of the beans lazily. So, instead of fully initializing the bean, it will create a proxy to inject it into the other bean. The injected bean will only be fully created when it’s first needed.
+```java
+@Component
+public class DependencyA {
+
+    private DependencyB circB;
+
+    @Autowired
+    public DependencyA(@Lazy DependencyB circB) {
+        this.circB = circB;
+    }
+}
+```
+
+#### 2. Use setter/field injection
+Eventhough the construction injection shows the best practice in injection, the setter and field injection is better to handle circular dependency injection. With setter/field injection, Spring create the beans but the dependencies aren’t injected until they are needed.
+```java
+@Component
+public class DependencyA {
+
+    private DependencyB circB;
+
+    @Autowired
+    public void setCircB(DependencyB circB) {
+        this.circB = circB;
+    }
+
+    public DependencyB getCircB() {
+        return circB;
+    }
+}
+```
+```java
+@Component
+public class DependencyB {
+
+    private DependencyA circA;
+
+    @Autowired
+    public void setCircA(DependencyA circA) {
+        this.circA = circA;
+    }
+}
+```
+
+#### 3. Use @PostConstruct
+Another way to break the cycle is by injecting a dependency using @Autowired on one of the beans and then using a method annotated with @PostConstruct to set the other dependency.
+
+```java
+@Component
+public class DependencyA {
+
+    @Autowired
+    private DependencyB circB;
+
+    @PostConstruct
+    public void init() {
+        circB.setCircA(this);
+    }
+
+    public DependencyB getCircB() {
+        return circB;
+    }
+}
+```
+
+```java
+@Component
+public class DependencyB {
+
+    private DependencyA circA;
+
+    public void setCircA(DependencyA circA) {
+        this.circA = circA;
+    }
+}
+```
+
 <h2>Annotations</h2>
 
 <h3>@Configuration</h3>
@@ -47,7 +171,7 @@ public class AppConfig {
     }
 }
 ```
-</h3>@Bean</h3>
+<h3>@Bean</h3>
 
 **Purpose:** To specify a method returns a bean to be managed by Spring context. Spring Bean annotation is usually declared in Configuration classes methods.
 
@@ -89,8 +213,10 @@ public class Employee {
 **Example:**
 ```java
 @Service
-public interface EmailService{
-    void send(Email email);
+public class EmailServiceImpl implements EmailService{
+    void send(Email email){
+        ...
+    }
 }
 ```
 <h3>@Repository</h3>
