@@ -26,7 +26,6 @@ In this part, we will dive into **request-scoped** bean. Request scope is a bean
 - Use cases: Ideal for simple applications or scenarios where memory usage is a critical concern.
 
 ### ApplicationContext
-
 - Advanced IoC container: Extends BeanFactory and offers additional features.
 - Inherits functionalities: Provides all functionalities of BeanFactory along with its own capabilities.
 - Advanced features: Supports functionalities like event handling, message publishing, internationalization (i18n), resource management, etc.

@@ -1,10 +1,8 @@
 package com.lecture7.assignment2;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
+import org.springframework.context.ApplicationContext;
 import com.lecture7.assignment2.entity.Email;
 import com.lecture7.assignment2.entity.Employee;
 import com.lecture7.assignment2.service.EmployeeServiceConstructor;
@@ -16,21 +14,20 @@ public class Assignment2Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Assignment2Application.class, args);
-	}
 
-	@Bean
-	CommandLineRunner run(EmployeeServiceConstructor employeeServiceConstructor, 
-					EmployeeServiceField employeeServiceField, 
-					EmployeeServiceSetter employeeServiceSetter){
-		return args -> {
-			var e1 = new Employee("MNG_01", "Luke", 40);
-			var e2 = new Employee("DEV_01", "Nadia", 29);
+		ApplicationContext context = SpringApplication.run(Assignment2Application.class, args);
+		var employeeServiceConstructor = context.getBean(EmployeeServiceConstructor.class);
+		var employeeServiceField = context.getBean(EmployeeServiceField.class);
+		var employeeServiceSetter = context.getBean(EmployeeServiceSetter.class);
+	
+		var e1 = new Employee("MNG_01", "Luke", 40);
+		var e2 = new Employee("DEV_01", "Nadia", 29);
 
-			var email = new Email(e1, e2, "Working Report", "Keep up the good work!");
+		var email = new Email(e1, e2, "Working Report", "Keep up the good work!");
 
-			employeeServiceConstructor.notifyEmployee(email);
-			employeeServiceSetter.notifyEmployee(email);
-			employeeServiceField.notifyEmpoyee(email);
-		};
+		employeeServiceField.notifyEmpoyee(email);
+		employeeServiceConstructor.notifyEmployee(email);
+		employeeServiceSetter.notifyEmployee(email);
+	
 	}
 }
