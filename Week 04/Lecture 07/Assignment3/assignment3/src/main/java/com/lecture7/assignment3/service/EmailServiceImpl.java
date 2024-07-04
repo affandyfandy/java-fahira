@@ -1,10 +1,12 @@
 package com.lecture7.assignment3.service;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.lecture7.assignment3.entity.Email;
 
 @Service
+@Scope("singleton")
 public class EmailServiceImpl implements EmailService{
 
     @Override

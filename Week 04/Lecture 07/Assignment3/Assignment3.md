@@ -16,6 +16,10 @@ In contrast, a prototype-scoped bean results in the Spring IoC container creatin
 
 In this part, we will dive into **request-scoped** bean. Request scope is a bean definition to an HTTP request. Only valid in the context of a web-aware Spring ApplicationContext. We can define the bean with the request scope using the @Scope annotation.
 
+First, we create new component and defined the scope with annotation `@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)`. The full code could be accessed at `EmployeeServiceRequest.java`. Then, we created the `EmployeeController.java` for the controller to handle REST API. After we test the application using Postman, the output will be as below.
+
+![image](/Week%2004/Lecture%2007/Assignment3/assignment3/image/result2.png)
+
 <h2>BeanFactory vs. ApplicationContext</h2>
 
 ### BeanFactory

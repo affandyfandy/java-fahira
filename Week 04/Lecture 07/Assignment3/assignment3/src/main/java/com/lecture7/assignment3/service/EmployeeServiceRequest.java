@@ -2,19 +2,20 @@ package com.lecture7.assignment3.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import com.lecture7.assignment3.entity.Email;
 import com.lecture7.assignment3.entity.Employee;
 
 @Service
-@Scope("prototype")
-public class EmployeeService {
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class EmployeeServiceRequest {
 
     final EmailService emailService;
 
     @Autowired
-    public EmployeeService(EmailService emailService) {
+    public EmployeeServiceRequest(EmailService emailService) {
         this.emailService = emailService;
     }
 
