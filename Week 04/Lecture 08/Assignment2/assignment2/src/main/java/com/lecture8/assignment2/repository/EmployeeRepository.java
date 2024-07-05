@@ -4,11 +4,12 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.lecture8.assignment2.entity.Employee;
+
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @Repository
 public class EmployeeRepository {
@@ -21,9 +22,9 @@ public class EmployeeRepository {
             new Object[] { employee.getId(), employee.getName(), employee.getDob(), employee.getAddress(), employee.getDepartment() });
     }
 
-    public int update(String id, Employee employee){
+    public int update(Employee employee){
         return jdbc.update("UPDATE employee SET name=?, dob=?, address=?, department=? WHERE id=?",
-            new Object[] { employee.getName(), employee.getDob(),employee.getAddress(), employee.getDepartment(), id});
+            new Object[] { employee.getName(), employee.getDob(),employee.getAddress(), employee.getDepartment(), employee.getId()});
     }
 
     public Employee findById(String id){

@@ -2,31 +2,50 @@ package com.lecture8.assignment2.entity;
 
 import java.sql.Date;
 import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Setter
-@Getter
 @Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name="employee")
 public class Employee {
 
-    @Id
     private String id;
-
-    @Column(name = "name")
     private String name;
-
-    @Column(name = "dob")
     private Date dob;
-
-    @Column(name = "address")
     private String address;
-
-    @Column(name = "department")
     private String department;
+
+    public String getId(){
+        return this.id;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+    
+    public Date getDob(){
+        return this.dob;
+    }
+
+    public String getAddress(){
+        return this.address;
+    }
+
+    public String getDepartment(){
+        return this.department;
+    }
+
+    public void setId(String id){
+        this.id = id;
+    }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public void setDepartment(String department){
+        this.department = department;
+    }
+
+    public void setDob(Date dob){
+        this.dob = dob;
+    }
 }
