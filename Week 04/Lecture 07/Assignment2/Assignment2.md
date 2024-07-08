@@ -41,7 +41,7 @@ Spring will create bean C, then create bean B (and inject bean C into it), then 
 
 <h3>Bean A → Bean B → Bean A</h3>
 
-Spring can't decide which of the beans should be created first since they depend on one another. In these cases, Spring will raise a `BeanCurrentlyInCreationException` while loading context. It happens in Spring when using **constructor injection**. If we use other types of injections, we shouldn’t have this problem since the dependencies will be injected when they are needed and not on the context loading.
+Spring can't decide which of the beans should be created first since they depend on one another. In these cases, Spring will raise a `BeanCurrentlyInCreationException` while loading context. It happens in Spring when using **constructor injection**. If we use other types of injections, we shouldn’t have this problem since the dependencies will be injected when they are needed and not on the context loading. Importantly, we must avoid this condition happened while designing code because it can make things very complicated and difficult to handle.
 
 ### Example
 ```java
@@ -70,7 +70,7 @@ public class DependencyB {
 ```
 If we run the program, it will return like this.
 ```java
-BeanCurrentlyInCreationException: Error creating bean with name 'circularDependencyA':
+BeanCurrentlyInCreationException: Error creating bean with name 'dependencyA':
 Requested bean is currently in creation: Is there an unresolvable circular reference?
 ```
 
@@ -192,6 +192,156 @@ public class AppConfig {
 @ComponentScan(basePackages = "com.lecture7.assignment2")
 public class AppConfig {}
 ```
+
+For a Spring Boot application, the `@SpringBootApplication` annotation used in the main class is a combination of these three annotations:
+- @Configuration
+- @EnableAutoConfiguration
+- @ComponentScan
+
+Therefore, by default, Spring Boot will scan all classes in the same package as the main class and all its sub-packages to discover and initialize the specified beans.
+
+#### Example
+We have the project structure as below.
+
+    .
+    ├── ...
+    ├── com.fsoft.assignment/
+    │   ├── AssignmentApplication.java
+    │   ├── MyConfig.java
+    │   ├── MyBean.java
+    │   ├── MyService.java
+    │   └── ...
+    └── ...
+
+```java
+package com.fsoft.assignment;
+
+public class MyBean {
+
+    public String getName() {
+        return "My Bean";
+    }
+}
+```
+```java
+package com.fsoft.assignment;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class MyConfig {
+
+    @Bean
+    public MyBean myBean() {
+        return new MyBean();
+    }
+}
+```
+```java
+package com.fsoft.assignment;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MyService {
+
+    @Autowired
+    private MyBean myBean;
+
+    public void getMyBeanName() {
+        System.out.println(myBean.getName());
+    }
+}
+```
+```java
+package com.fsoft.assignment;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+public class AssignmentApplication {
+
+    private static ApplicationContext applicationContext;
+
+    public static void main(String[] args) {
+        applicationContext =  SpringApplication.run(AssignmentApplication.class, args);
+
+        System.out.println("Contains My Bean: " + applicationContext.containsBean("myBean"));
+        System.out.println("Contains My Service Bean: " + applicationContext.containsBean("myService"));
+        System.out.println("Contains My Config Bean: " + applicationContext.containsBean("myConfig"));
+    }
+}
+```
+The output will be as below.
+```
+Contains My Bean: true
+Contains My Service Bean: true
+Contains My Config Bean: true
+```
+
+This happened because the @SpringBootApplication already scanned the @Configuration, @EnableAutoConfiguration, and @ComponentScan in every file inside the package as the main class.
+
+But, what if we change the project structure to be like this.
+
+    .
+    ├── ...
+    ├── com.fsoft
+    │   ├── assignment/
+    │       ├── AssignmentApplication.java
+    │       ├── MyConfig.java
+    │       ├── MyBean.java
+    │       ├── MyService.java
+    │   └── test/
+    │       └── TestingService.java
+    └── ...
+
+```java
+package com.fsoft.test;
+
+@Service
+public class TestingService {
+}
+```
+To ensure that the bean TestingService appears in the IoC (Inversion of Control) container, we need to specify it in the `@ComponentScan` so that Spring can recognize it. In `@ComponentScan`, we can use the **basePackages** property to specify a list of Spring packages to scan.
+
+If we use `@ComponentScan` in ComponentScanApplication, we override the default `@ComponentScan` provided by `@SpringBootApplication`. Therefore, we need to specify all the packages that contain the beans that have been defined previously.
+
+```java
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.fsoft.test", "com.fsoft.assignment"})
+public class AssignmentApplication {
+
+    private static ApplicationContext applicationContext;
+
+    public static void main(String[] args) {
+        applicationContext =  SpringApplication.run(AssignmentApplication.class, args);
+
+        System.out.println("Contains My Bean: " + applicationContext.containsBean("myBean"));
+        System.out.println("Contains My Service Bean: " + applicationContext.containsBean("myService"));
+        System.out.println("Contains My Config Bean: " + applicationContext.containsBean("myConfig"));
+        System.out.println("Contains Testing Service Bean: " + applicationContext.containsBean("testingService"));
+    }
+}
+```
+
+Another way than change the `@ComponentScan` from `@SpringBootApplication` is using `@ComponentScan` in `@Configuration` file (MyConfig.java).
+
+```java
+@Configuration
+@ComponentScan(basePackages = {"com.fsoft.test"})
+public class MyConfig {
+
+    @Bean
+    public MyBean myBean() {
+        return new MyBean();
+    }
+}
+```
+
 <h3>@Component</h3>
 
 **Purpose:** It is used to denote a class as a Component. It is allows Spring to detect and create beans to the class with annotation @Component automatically. Spring framework provides three other specific annotations to be used when marking a class as a Component.
