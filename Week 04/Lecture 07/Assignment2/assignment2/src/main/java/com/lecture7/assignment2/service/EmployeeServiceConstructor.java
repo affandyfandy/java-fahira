@@ -1,6 +1,5 @@
 package com.lecture7.assignment2.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lecture7.assignment2.entity.Email;
@@ -11,7 +10,6 @@ public class EmployeeServiceConstructor {
 
     final EmailService emailService;
 
-    @Autowired
     public EmployeeServiceConstructor(EmailService emailService) {
         this.emailService = emailService;
     }
