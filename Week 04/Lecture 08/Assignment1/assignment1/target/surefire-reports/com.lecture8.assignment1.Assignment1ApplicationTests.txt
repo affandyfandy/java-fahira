@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.lecture8.assignment1.Assignment1ApplicationTests
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 13.72 s -- in com.lecture8.assignment1.Assignment1ApplicationTests
