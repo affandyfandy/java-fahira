@@ -17,5 +17,4 @@ public class EmployeeDTO {
     private String email;
     private LocalDate dob;
     private String phone;
-
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.lecture10.assignment1.dto.EmployeeDTO;
 import com.lecture10.assignment1.dto.EmployeeMapper;
+import com.lecture10.assignment1.exception.EmployeeNotFoundException;
 import com.lecture10.assignment1.model.Employee;
 import com.lecture10.assignment1.repository.EmployeeRepository;
 
@@ -41,8 +42,10 @@ public class EmployeeServiceImpl implements EmployeeService{
             employee.setPhone(employeeDTO.getPhone());
             employeeRepository.save(employee);
             return employeeMapper.toDTO(employee);
-        } 
-        return null;
+        }
+        else{
+            throw new EmployeeNotFoundException("Couldn't find employee with id: " + id);
+        }
     }
 
     @Override
@@ -52,7 +55,9 @@ public class EmployeeServiceImpl implements EmployeeService{
         if (employee.isPresent()){
             return employeeMapper.toDTO(employee.get());
         }
-        return null;
+        else{
+            throw new EmployeeNotFoundException("Couldn't find employee with id: " + id);
+        }
     }
 
     @Override
@@ -65,8 +70,13 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Transactional
     public void delete(String id) {
         var employee = employeeRepository.findById(id);
-        employeeRepository.delete(employee.get());
-    }
+        if (employee.isPresent()){
+            employeeRepository.delete(employee.get());
+        }
+        else{
+            throw new EmployeeNotFoundException("Couldn't find employee with id: " + id);
+        };
+    } 
 
     @Override
     @Transactional

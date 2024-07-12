@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lecture10.assignment1.dto.EmployeeDTO;
+import com.lecture10.assignment1.exception.EmployeeNotFoundException;
 import com.lecture10.assignment1.service.EmployeeService;
 import com.lecture10.assignment1.utils.FileUtils;
 
@@ -36,7 +37,8 @@ public class EmployeeController {
     // retrieve all employees
     @GetMapping
     public ResponseEntity<List<EmployeeDTO>> listAllEmployee(){
-        return ResponseEntity.ok(employeeService.listAllEmployee());
+        var employees = employeeService.listAllEmployee();
+        return ResponseEntity.status(HttpStatus.OK).body(employees);
     }
 
     // add new employee
@@ -48,21 +50,38 @@ public class EmployeeController {
 
     // get employee by id
     @GetMapping(value = "/{id}")
-    public ResponseEntity<EmployeeDTO> findEmployee(@PathVariable("id") String id) {
-        return ResponseEntity.ok().body(employeeService.findById(id));
+    public ResponseEntity<?> findEmployee(@PathVariable("id") String id) {
+        try {
+            var response = employeeService.findById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+        catch (EmployeeNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     // update employee data
     @PutMapping(value = "/{id}")
-    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable(value = "id") String id, @RequestBody EmployeeDTO employeeDTO) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(employeeService.update(employeeDTO, id));
+    public ResponseEntity<?> updateEmployee(@PathVariable(value = "id") String id, @RequestBody EmployeeDTO employeeDTO) {
+        try{
+            var response = employeeService.update(employeeDTO, id);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+        }
+        catch (EmployeeNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     // delete employee by id
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable(value = "id") String id){
-        employeeService.delete(id);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Employee has been deleted");
+    public ResponseEntity<?> deleteEmployee(@PathVariable(value = "id") String id){
+        try{
+            employeeService.delete(id);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Employee has been deleted");
+        }
+        catch (EmployeeNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     // upload employee
