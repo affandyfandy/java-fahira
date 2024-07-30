@@ -35,7 +35,8 @@ Please refer to [these codes](/Assignment1/assignment1/src/main/java/com/lecture
 
 When a request reaches a controller endpoint (e.g., /will-redirect or /will-forward), the OncePerRequestImpl filter is applied. It processes the request before it reaches the controller and logs information after the request has been processed by the controller and before the response is sent back to the client.
 
-#### Test esult
+#### Test result
+![result.png](/Week%2008/Lecture%2015/Assignment1/assignment1/img/Screen%20Shot%202024-07-30%20at%2009.51.22.png)
 - Send a request to the `/will-forward` path.
 - The **doFilter** in CustomFilter log appears 2 times.
 - The **doFilter** in OncePerRequestImpl log appears 1 time.
