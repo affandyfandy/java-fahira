@@ -41,5 +41,6 @@ public class ApiKeyServiceImpl implements ApiKeyService {
     public void updateLastUsage(String apiKey) {
         ApiKey findApi = apiKeyRepository.findByApiKey(apiKey);
         findApi.setLastUsed(LocalDateTime.now());
+        apiKeyRepository.save(findApi);
     }
 }
