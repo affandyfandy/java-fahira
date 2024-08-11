@@ -2,13 +2,8 @@ package com.midterm.group4.controller;
 
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.nullValue;
-
 import java.util.Arrays;
-
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -84,7 +79,7 @@ public class CustomerControllerTest {
         Mockito.when(service.updateStatusNew(Mockito.any(UUID.class), Mockito.any(Boolean.class)))
             .thenThrow(new ObjectNotFoundException("Customer not found with ID: " + customerId));
             
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/customer/" + customerId + "/deactivate")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/customer/{id}/deactivate", customerId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Customer not found with ID: " + customerId));
@@ -100,10 +95,10 @@ public class CustomerControllerTest {
         updatedCustomer.setPhone("081807099909");
         updatedCustomer.setActive(false);
         
-        Mockito.when(service.updateNew(Mockito.any(UUID.class), Mockito.any(Customer.class)))
+        Mockito.when(service.updateNew(Mockito.eq(customer.getCustomerId()), Mockito.any(Customer.class)))
             .thenReturn(updatedCustomer);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/customer/" + customer.getCustomerId())
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/customer/{id}",customer.getCustomerId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updatedCustomer)))
                 .andExpect(MockMvcResultMatchers.status().isAccepted())
@@ -116,9 +111,9 @@ public class CustomerControllerTest {
     @Test
     @DisplayName("Test 4: Get customer by customer Id")
     public void testGetCustomer() throws Exception{
-        Mockito.when(service.findById(Mockito.any(UUID.class))).thenReturn(customer);
+        Mockito.when(service.findById(Mockito.eq(customer.getCustomerId()))).thenReturn(customer);
         
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/customer/" + customer.getCustomerId()))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/customer/{id}",customer.getCustomerId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("Tirta"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Cipeng"))
@@ -150,12 +145,29 @@ public class CustomerControllerTest {
     @Test
     @DisplayName("Test 6: Activate existing customer status")
     public void testUpdateCustomerStatus() throws Exception{
-        Mockito.when(service.updateStatusNew(Mockito.any(UUID.class), Mockito.any(Boolean.class))).thenReturn(customer);
+        customer.setActive(true);
+        Mockito.when(service.updateStatusNew(Mockito.eq(customer.getCustomerId()), Mockito.eq(true))).thenReturn(customer);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/customer/{id}/activate", customer.getCustomerId()))
             .andExpect(MockMvcResultMatchers.status().isAccepted())
             .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.jsonPath("$.active").value(true));
+    }
 
+    @Test
+    @DisplayName("Test 7: Successfully deactivate customer status")
+    public void testDeactivateStatusSuccess() throws Exception {
+        customer.setActive(false);
+        
+        Mockito.when(service.updateStatusNew(Mockito.eq(customer.getCustomerId()), Mockito.eq(false)))
+                .thenReturn(customer);
+        
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/customer/{id}/deactivate", customer.getCustomerId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.customerId").value(customer.getCustomerId().toString()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.firstName").value("Tirta"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.lastName").value("Cipeng"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.active").value(false));
     }
 }

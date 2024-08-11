@@ -2,7 +2,10 @@ package com.midterm.group4.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.bouncycastle.util.test.FixedSecureRandom.BigInteger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,8 +17,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import com.midterm.group4.data.model.Customer;
+import com.midterm.group4.data.model.Invoice;
 import com.midterm.group4.data.repository.CustomerRepository;
 
 @DataJpaTest
@@ -57,5 +62,30 @@ public class CustomerRepositoryTest {
         repository.delete(customer);
         Optional<Customer> actual = repository.findById(customer.getCustomerId());
         assertThat(actual).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Test 3: @PrePersist lifecycle method")
+    public void prePersist_thenReturnNewCreateAndUpdateTime() {
+        repository.flush();
+
+        assertNotNull(customer.getCustomerId());
+        assertNotNull(customer.getCreatedTime());
+        assertNotNull(customer.getUpdatedTime());
+
+        assertEquals(customer.getCreatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
+        assertEquals(customer.getUpdatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
+    }
+
+    @Test
+    @DisplayName("Test 4: @PostUpdate lifecycle method")
+    public void postUpdate_thenReturnNewUpdateTime() {
+        customer.setLastName("Maurer");
+        repository.save(customer);
+
+        repository.flush();
+
+        assertNotNull(customer.getUpdatedTime());
+        assertEquals(customer.getUpdatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
     }
 }

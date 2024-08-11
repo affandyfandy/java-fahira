@@ -18,8 +18,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,6 +52,9 @@ import com.midterm.group4.utils.DocumentUtils;
 @ExtendWith(SpringExtension.class)
 public class InvoiceServiceTest {
 
+    @InjectMocks
+    private InvoiceServiceImpl service;
+
     @Mock
     private InvoiceRepository invoiceRepository;
 
@@ -68,9 +72,6 @@ public class InvoiceServiceTest {
 
     @Mock
     private DocumentUtils documentUtils;
-
-    @InjectMocks
-    private InvoiceServiceImpl service;
 
 
     private Customer customer;
@@ -156,15 +157,14 @@ public class InvoiceServiceTest {
         });
     }
 
-    @Test
-    @DisplayName("Test 5: Create new invoice with valid data")
-    public void createNewInvoice_withValidData_thenReturnInvoice(){
-        invoice.setCustomer(customer);
-        List<OrderItem> listOrderItem = Arrays.asList(orderItem);
-        when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
-        Invoice actual = service.createInvoice(invoice, listOrderItem);
-        assertEquals(invoice, actual);
-    }
+    // @Test
+    // @DisplayName("Test 5: Create new invoice with valid data")
+    // public void createNewInvoice_withValidData_thenReturnInvoice(){
+    //     List<OrderItem> listOrderItem = Arrays.asList(orderItem);
+    //     when(invoiceRepository.save(any(Invoice.class))).thenReturn(invoice);
+    //     Invoice actual = service.createInvoice(invoice, listOrderItem);
+    //     assertEquals(invoice, actual);
+    // }
 
     @Test
     @DisplayName("Test 6: Create new invoice with non existing customer")
@@ -650,5 +650,101 @@ public class InvoiceServiceTest {
         verify(invoiceRepository).findById(invoiceId);
         verify(documentUtils).generateByteInvoice(invoice);
     }
+
+    @Test
+    @DisplayName("Test 35: Create invoice with empty listOrderItem throws exception")
+    public void createInvoice_emptyListOrderItem_throwsException() {
+        when(customerRepository.findById(customer.getCustomerId())).thenReturn(Optional.of(customer));
+
+        invoice.setCustomer(customer);
+        invoice.setListOrderItem(new ArrayList<>());
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            service.createInvoice(invoice, invoice.getListOrderItem());
+        });
+        assertEquals("List order can't be empty", thrown.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test 35: Create invoice and calculate amount")
+    public void whenCreateInvoice_thenCalculateAmountCorrectly() {
+        invoice.setCustomer(customer);
+        List<OrderItem> orderItems = new ArrayList<>();
+        orderItems.add(orderItem);
+
+        when(customerRepository.findById(any(UUID.class))).thenReturn(Optional.of(customer));
+        when(productService.findById(any(UUID.class))).thenReturn(product);
+        when(invoiceRepository.save(any(Invoice.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Invoice createdInvoice = service.createInvoice(invoice, orderItems);
+
+        BigInteger expectedAmount = product.getPrice().multiply(BigInteger.valueOf(orderItem.getQuantity()));
+        assertEquals(expectedAmount, orderItem.getAmount());
+        assertEquals(expectedAmount, createdInvoice.getTotalAmount());
+        verify(productRepository, times(1)).save(product);
+        verify(orderItemRepository, times(1)).saveAll(orderItems);
+    }
+
+    @Test
+    @DisplayName("Test 36: Get total qty per product")
+    public void getTotalQuantityPerProduct_thenReturnsCorrectMap() {
+        List<Object[]> mockData = Arrays.asList(
+            new Object[]{"ProductA", 100L},
+            new Object[]{"ProductB", 200L}
+        );
+
+        when(orderItemRepository.findTotalQuantityPerProduct()).thenReturn(mockData);
+
+        Map<String, Long> expected = new HashMap<>();
+        expected.put("ProductA", 100L);
+        expected.put("ProductB", 200L);
+
+        Map<String, Long> result = service.getTotalQuantityPerProduct();
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    @DisplayName("Test 37: Get total amount per product")
+    public void getTotalAmountPerProduct_thenReturnsCorrectMap() {
+        List<Object[]> mockData = Arrays.asList(
+            new Object[]{"ProductA", BigInteger.valueOf(1000)},
+            new Object[]{"ProductB", BigInteger.valueOf(2000)}
+        );
+
+        when(orderItemRepository.findTotalAmountPerProduct()).thenReturn(mockData);
+
+        Map<String, BigInteger> expected = new HashMap<>();
+        expected.put("ProductA", BigInteger.valueOf(1000));
+        expected.put("ProductB", BigInteger.valueOf(2000));
+
+        Map<String, BigInteger> result = service.getTotalAmountPerProduct();
+
+        assertEquals(expected, result, "The total amount per product map should be correct");
+    }
+
+    @Test
+    @DisplayName("Test 38: Get top 3 product by its amount")
+    public void getTop3ProductsByAmount_thenReturnsTop3Products() {
+        List<Object[]> mockData = Arrays.asList(
+            new Object[]{"ProductA", BigInteger.valueOf(3000)},
+            new Object[]{"ProductB", BigInteger.valueOf(2000)},
+            new Object[]{"ProductC", BigInteger.valueOf(1000)},
+            new Object[]{"ProductD", BigInteger.valueOf(500)}
+        );
+
+        when(orderItemRepository.findTopProductsByAmount()).thenReturn(mockData);
+
+        List<Map<String, Object>> expected = Arrays.asList(
+            Map.of("name", "ProductA", "totalAmount", BigInteger.valueOf(3000)),
+            Map.of("name", "ProductB", "totalAmount", BigInteger.valueOf(2000)),
+            Map.of("name", "ProductC", "totalAmount", BigInteger.valueOf(1000))
+        );
+
+        List<Map<String, Object>> result = service.getTop3ProductsByAmount();
+
+        assertEquals(expected, result, "The list of top 3 products by amount should be correct");
+    }
+
 
 }

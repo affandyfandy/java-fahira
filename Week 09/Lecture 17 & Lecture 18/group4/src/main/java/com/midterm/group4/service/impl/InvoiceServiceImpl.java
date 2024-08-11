@@ -21,7 +21,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ import com.midterm.group4.data.model.Product;
 import com.midterm.group4.data.repository.CustomerRepository;
 import com.midterm.group4.data.repository.InvoiceRepository;
 import com.midterm.group4.data.repository.ProductRepository;
-import com.midterm.group4.exception.ErrorResponse;
 import com.midterm.group4.exception.ObjectNotFoundException;
 import com.midterm.group4.service.InvoiceService;
 import com.midterm.group4.service.ProductService;
@@ -85,107 +83,6 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceRepository.findById(id)
             .orElseThrow(() -> new ObjectNotFoundException("Invoice not found with ID: " + id));
     }
-
-    // @Override
-    // @Transactional
-    // public Invoice update(UUID id, Invoice invoice, List<OrderItem> listOrderItem) {
-    //     // Find the invoice to be updated
-    //     Invoice findInvoice = findById(id);
-    //     if (findInvoice == null) return null;
-    
-    //     // Check if the invoice can be edited based on the creation time
-    //     LocalDateTime createdTime = findInvoice.getCreatedTime();
-    //     LocalDateTime currentTime = LocalDateTime.now();
-    //     Duration duration = Duration.between(createdTime, currentTime);
-    //     if (duration.toMinutes() > 10) {
-    //         throw new IllegalArgumentException("Invoice can't be edited");
-    //     }
-    
-    //     // Create a map for existing order items to facilitate quick lookups
-    //     Map<UUID, OrderItem> currentOrderItemsMap = findInvoice.getListOrderItem().stream()
-    //         .collect(Collectors.toMap(orderItem -> orderItem.getProduct().getProductId(), orderItem -> orderItem));
-    
-    //     // Initialize total amount and updated order items list
-    //     BigInteger totalAmount = BigInteger.ZERO;
-    //     List<OrderItem> updatedOrderItems = new ArrayList<>();
-    
-    //     // Process new order items
-    //     for (OrderItem newOrderItem : listOrderItem) {
-    //         UUID productId = newOrderItem.getProduct().getProductId();
-    //         Product product = productService.findById(productId);
-    
-    //         if (product == null) {
-    //             throw new IllegalArgumentException("Product does not exist");
-    //         }
-    //         if (!product.isActive()) {
-    //             throw new IllegalArgumentException("Product is not active");
-    //         }
-    //         if (product.getQuantity() < newOrderItem.getQuantity()) {
-    //             throw new IllegalArgumentException("Insufficient product quantity");
-    //         }
-    
-    //         BigInteger quantity = BigInteger.valueOf(newOrderItem.getQuantity());
-    //         BigInteger price = product.getPrice();
-    //         BigInteger amount = price.multiply(quantity);
-    
-    //         // Update the product quantity
-    //         product.setQuantity(product.getQuantity() - newOrderItem.getQuantity());
-    //         productRepository.save(product);
-    
-    //         // Check if the product is already in the invoice
-    //         if (currentOrderItemsMap.containsKey(productId)) {
-    //             // Update existing order item
-    //             OrderItem existingOrderItem = currentOrderItemsMap.get(productId);
-    //             BigInteger oldAmount = existingOrderItem.getAmount();
-    //             existingOrderItem.setQuantity(newOrderItem.getQuantity());
-    //             existingOrderItem.setAmount(amount);
-    //             updatedOrderItems.add(existingOrderItem);
-    
-    //             // Adjust the total amount by subtracting the old amount and adding the new amount
-    //             totalAmount = totalAmount.add(amount).subtract(oldAmount);
-    //         } else {
-    //             // Add new order item
-    //             newOrderItem.setAmount(amount);
-    //             newOrderItem.setInvoice(findInvoice);
-    //             newOrderItem.setProduct(product);
-    //             updatedOrderItems.add(newOrderItem);
-    
-    //             // Add the new amount to the total
-    //             totalAmount = totalAmount.add(amount);
-    //         }
-    //     }
-    
-    //     // Identify and process removed order items
-    //     List<OrderItem> removedOrderItems = findInvoice.getListOrderItem().stream()
-    //         .filter(orderItem -> !listOrderItem.stream()
-    //         .anyMatch(newOrderItem -> newOrderItem.getProduct().getProductId().equals(orderItem.getProduct().getProductId())))
-    //         .collect(Collectors.toList());
-    
-    //     for (OrderItem removedOrderItem : removedOrderItems) {
-    //         UUID productId = removedOrderItem.getProduct().getProductId();
-    //         Product product = productService.findById(productId);
-    
-    //         if (product != null) {
-    //             // Add the quantity of the removed item back to the product inventory
-    //             product.setQuantity(product.getQuantity() + removedOrderItem.getQuantity());
-    //             productRepository.save(product);
-    //         }
-    
-    //         // Adjust the total amount by subtracting the removed item's amount
-    //         totalAmount = totalAmount.subtract(removedOrderItem.getAmount());
-    //     }
-    
-    //     // Update the invoice with new total amount and order items
-    //     findInvoice.setTotalAmount(totalAmount);
-    //     findInvoice.getListOrderItem().clear();
-    //     findInvoice.getListOrderItem().addAll(updatedOrderItems);
-    
-    //     // Save updated invoice and order items
-    //     invoiceRepository.save(findInvoice);
-    //     orderItemRepository.saveAll(updatedOrderItems);
-    
-    //     return findInvoice;
-    // }
 
     @Override
     @Transactional
@@ -333,10 +230,17 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         BigInteger totalAmount = BigInteger.ZERO;
 
+        if (listOrderItem.isEmpty()){
+            throw new IllegalArgumentException("List order can't be empty");
+        }
+
         for (OrderItem orderItem : listOrderItem){
 
             Product product = productService.findById(orderItem.getProduct().getProductId());
-            if (!product.isActive()) {
+            if (product == null){
+                throw new ObjectNotFoundException("Product doesn't exist");
+            }
+            else if (!product.isActive()) {
                 throw new IllegalArgumentException("Product is inactive");
             }
             else if (product.getQuantity() < orderItem.getQuantity()){

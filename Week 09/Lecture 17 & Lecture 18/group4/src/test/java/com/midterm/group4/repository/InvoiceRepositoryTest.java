@@ -19,8 +19,11 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.List;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,5 +129,52 @@ public class InvoiceRepositoryTest {
         assertEquals(1, invoices.size());
         assertEquals(invoice.getCustomer().getCustomerId(), invoices.get(0).getCustomer().getCustomerId());
     }
+
+    @Test
+    @DisplayName("Test 9: @PrePersist lifecycle method")
+    public void prePersist_thenReturnNewCreateAndUpdateTime() {
+        invoiceRepository.flush();
+
+        assertNotNull(invoice.getInvoiceId());
+        assertNotNull(invoice.getCreatedTime());
+        assertNotNull(invoice.getUpdatedTime());
+
+        assertEquals(invoice.getCreatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
+        assertEquals(invoice.getUpdatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
+    }
+
+    @Test
+    @DisplayName("Test 10: @PostUpdate lifecycle method")
+    public void postUpdate_thenReturnNewUpdateTime() {
+        invoice.setListOrderItem(new ArrayList<>());
+        invoiceRepository.save(invoice);
+        invoiceRepository.flush();
+
+        assertNotNull(invoice.getUpdatedTime());
+        assertEquals(invoice.getUpdatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
+    }
+
+    @Test
+    @DisplayName("Test 11: Create invoice with null id")
+    public void whenPersistInvoice_withNullInvoiceId_thenInvoiceIdShouldBeGenerated() {
+        Invoice invalidInvoice = new Invoice();
+        invalidInvoice.setInvoiceId(null);
+        invalidInvoice.setListOrderItem(new ArrayList<>());
+        invalidInvoice.setTotalAmount(BigInteger.valueOf(100));
+        invalidInvoice.setInvoiceDate(LocalDate.now());
+        invoiceRepository.save(invalidInvoice);
+
+        Invoice savedInvoice = invoiceRepository.findById(invalidInvoice.getInvoiceId()).orElse(null);
+
+        assertNotNull(savedInvoice);
+        assertNotNull(savedInvoice.getInvoiceId());
+        assertTrue(savedInvoice.getInvoiceId() != null);
+        assertNotNull(savedInvoice.getCreatedTime());
+        assertNotNull(savedInvoice.getUpdatedTime());
+        assertTrue(savedInvoice.getCreatedTime().isBefore(LocalDateTime.now()));
+        assertTrue(savedInvoice.getUpdatedTime().isBefore(LocalDateTime.now()));
+    }
+    
+
 
 }

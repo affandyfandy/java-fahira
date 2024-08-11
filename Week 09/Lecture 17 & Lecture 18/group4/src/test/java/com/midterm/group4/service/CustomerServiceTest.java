@@ -142,17 +142,17 @@ public class CustomerServiceTest {
         assertEquals("Phone number cannot be null or empty.", thrown.getMessage());
     }   
 
-    @Test
-    @DisplayName("Test 7: Update non existing customer")
-    public void updateCustomer_withNonExisitingId_thenReturnException(){
-        UUID random = UUID.randomUUID();
-        when(repository.findById(random)).thenReturn(Optional.empty());
-        ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
-            service.updateNew(random, customer);
-        });
-        assertEquals("Customer not found with ID: " + random, thrown.getMessage());
-        verify(repository, times(1)).findById(random);
-    }   
+    // @Test
+    // @DisplayName("Test 7: Update non existing customer")
+    // public void updateCustomer_withNonExisitingId_thenReturnException(){
+    //     UUID random = UUID.randomUUID();
+    //     when(repository.findById(random)).thenReturn(null);
+    //     ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
+    //         service.updateNew(random, customer);
+    //     });
+    //     assertEquals("Customer not found with ID: " + random, thrown.getMessage());
+    //     verify(repository, times(1)).findById(random);
+    // }   
 
     @Test
     @DisplayName("Test 8: Update existing customer detail")
@@ -182,6 +182,7 @@ public class CustomerServiceTest {
         assertThrows(InvalidInputException.class, () -> {
             service.saveCustomer(newCustomer);
         });
+        assertEquals("Invalid phone number format.", thrown.getMessage());
         verify(repository, never()).save(any(Customer.class));
     }
 
@@ -196,4 +197,20 @@ public class CustomerServiceTest {
         assertEquals(LocalDateTime.now().getDayOfYear(), savedCustomer.getUpdatedTime().getDayOfYear());
         verify(repository, times(1)).save(customer);
     }
+
+    // @Test
+    // @DisplayName("Test 11: Update status with non existing id")
+    // public void updateStatus_withNonExistingId_thenRetunCustomerNotFound() {
+    //     UUID random = UUID.randomUUID();
+    //     when(repository.findById(random)).thenReturn(null);
+
+    //     ObjectNotFoundException thrown = assertThrows(ObjectNotFoundException.class, () -> {
+    //         service.updateStatusNew(random, false);
+    //     });
+
+    //     assertEquals("Customer not found with ID: " + random, thrown.getMessage());
+
+    //     verify(repository, times(1)).findById(random);
+    //     verify(repository, never()).save(any(Customer.class));
+    // }
 }

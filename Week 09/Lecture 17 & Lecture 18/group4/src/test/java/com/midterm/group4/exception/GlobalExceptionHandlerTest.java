@@ -1,6 +1,7 @@
 package com.midterm.group4.exception;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -77,7 +78,25 @@ public class GlobalExceptionHandlerTest {
     }
 
     @Test
-    @DisplayName("Test 4: Handle Generic Exception")
+    @DisplayName("Test 4: Handle InvalidFileContentException with cause should return Bad Request")
+    public void handleInvalidFileContentException_withCause_shouldReturnBadRequest() {
+        // Arrange
+        InvalidFileContentException invalidFileContentException = mock(InvalidFileContentException.class);
+        String errorMessage = "Invalid file content";
+        Throwable cause = new Throwable("Underlying cause");
+
+        when(invalidFileContentException.getMessage()).thenReturn(errorMessage);
+        when(invalidFileContentException.getCause()).thenReturn(cause);
+
+        ResponseEntity<ErrorResponse> response = handler.handleInvalidFileContentException(invalidFileContentException);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getBody().getStatus());
+        assertEquals(errorMessage, response.getBody().getMessage());
+    }
+
+    @Test
+    @DisplayName("Test 5: Handle Generic Exception")
     public void handleGenericException_shouldReturnInternalServerError() {
         String errorMessage = "Something went wrong";
         Exception error = new Exception(errorMessage);

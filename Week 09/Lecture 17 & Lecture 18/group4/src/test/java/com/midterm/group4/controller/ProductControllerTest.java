@@ -1,10 +1,20 @@
 package com.midterm.group4.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigInteger;
 import java.util.UUID;
 import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -25,7 +36,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.midterm.group4.data.model.Product;
 import com.midterm.group4.service.impl.ProductServiceImpl;
-
+import com.midterm.group4.utils.FileUtils;
 import com.midterm.group4.dto.ProductMapperImpl;
 import com.midterm.group4.exception.ObjectNotFoundException;
 
@@ -176,15 +187,15 @@ public class ProductControllerTest {
     @Test
     @DisplayName("Test 7: Set existing product status to deactive")
     public void testDeactivateProductStatus() throws Exception{
-        Product activeProduct = new Product();
-        activeProduct.setProductId(product.getProductId());
-        activeProduct.setName("MacBook Air 2020");
-        activeProduct.setPrice(BigInteger.valueOf(190000000));
-        activeProduct.setQuantity(10);
-        activeProduct.setActive(false);
+        Product inactiveProduct = new Product();
+        inactiveProduct.setProductId(product.getProductId());
+        inactiveProduct.setName("MacBook Air 2020");
+        inactiveProduct.setPrice(BigInteger.valueOf(190000000));
+        inactiveProduct.setQuantity(10);
+        inactiveProduct.setActive(false);
 
         Mockito.when(productService.updateStatus(Mockito.any(UUID.class), Mockito.any(Boolean.class)))
-            .thenReturn(activeProduct);
+            .thenReturn(inactiveProduct);
             
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/product/{id}/deactivate", product.getProductId())
             .contentType(MediaType.APPLICATION_JSON))

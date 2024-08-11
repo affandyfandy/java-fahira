@@ -2,12 +2,14 @@ package com.midterm.group4.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -116,6 +118,31 @@ public class OrderItemRepositoryTest {
 
         assertThat(amountMap).containsEntry("Product1", BigInteger.valueOf(1000));
         assertThat(amountMap).containsEntry("Product2", BigInteger.valueOf(1000));
+    }
+
+    @Test
+    @DisplayName("Test 5: @PrePersist lifecycle method")
+    public void prePersist_thenReturnNewCreateAndUpdateTime() {
+        repository.flush();
+
+        assertNotNull(orderItem1.getOrderItemId());
+        assertNotNull(orderItem1.getCreatedTime());
+        assertNotNull(orderItem1.getUpdatedTime());
+
+        assertEquals(orderItem1.getCreatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
+        assertEquals(orderItem1.getUpdatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
+    }
+
+    @Test
+    @DisplayName("Test 6: @PostUpdate lifecycle method")
+    public void postUpdate_thenReturnNewUpdateTime() {
+        orderItem1.setQuantity(19);
+        repository.save(orderItem1);
+
+        repository.flush();
+
+        assertNotNull(orderItem1.getUpdatedTime());
+        assertEquals(orderItem1.getUpdatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
     }
 
 

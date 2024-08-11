@@ -15,9 +15,11 @@ import com.midterm.group4.data.repository.ProductRepository;
 
 import java.math.BigInteger;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.springframework.transaction.annotation.Propagation;
@@ -106,24 +108,47 @@ public class ProductRepositoryTest {
 
         assertThat(result).isNotNull();
         assertEquals(result.getContent().size(), 2);
-        assertEquals(result.getContent().get(0).getName(), "Mustang Shelby GT500");
+        assertEquals("Mustang Shelby GT500", result.getContent().get(0).getName());
     }
 
     @Test
     @DisplayName("Test 5: Retrieve all products from its name and status")
-    public void retrieveProductByNameAndStatus_withNameMustangStatusActive_thenReturnPageOfProducts(){
-        Product newProduct = new Product();
-        newProduct.setName("Mustang Dark Horse");
-        newProduct.setPrice(BigInteger.valueOf(19829183));
-        newProduct.setActive(false);
-        newProduct.setQuantity(55);
-        repository.save(newProduct);
-
+    public void retrieveProductByNameAndStatus_withNameAndStatusActive_thenReturnPageOfProducts(){
         Pageable pageable = PageRequest.of(0, 10);
         Page<Product> result = repository.findAllByNameAndStatus("Mustang", true, pageable);
 
         assertThat(result).isNotNull();
-        assertEquals(result.getContent().size(), 1);
-        assertEquals(result.getContent().get(0).getName(), "Mustang Shelby GT500");
+        assertEquals(1, result.getContent().size());
+        assertEquals(product.getName(), result.getContent().get(0).getName());
     }
+
+    @Test
+    @DisplayName("Test 6: @PrePersist lifecycle method")
+    public void prePersist_thenReturnNewCreateAndUpdateTime() {
+        // Flush and clear to ensure @PrePersist is executed
+        repository.flush();
+
+        assertNotNull(product.getProductId());
+        assertNotNull(product.getCreatedTime());
+        assertNotNull(product.getUpdatedTime());
+
+        // Validate that createdTime and updatedTime are set to the current time
+        assertEquals(product.getCreatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
+        assertEquals(product.getUpdatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
+    }
+
+    @Test
+    @DisplayName("Test 7: @PostUpdate lifecycle method")
+    public void postUpdate_thenReturnNewUpdateTime() {
+        product.setQuantity(20); // Update the product to trigger @PostUpdate
+        repository.save(product);
+
+        // Flush and clear to ensure @PostUpdate is executed
+        repository.flush();
+
+        assertNotNull(product.getUpdatedTime());
+        // Validate that updatedTime is updated to the current time
+        assertEquals(product.getUpdatedTime().toLocalDate().toString(), LocalDateTime.now().toLocalDate().toString());
+    }
+
 }

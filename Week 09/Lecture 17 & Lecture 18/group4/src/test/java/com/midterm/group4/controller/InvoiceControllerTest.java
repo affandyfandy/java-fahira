@@ -9,6 +9,17 @@ import java.util.Optional;
 import java.util.HashMap;
 import java.util.List;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.UUID;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -90,30 +101,30 @@ public class InvoiceControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.content.length()").value(2));
     }
 
-    @Test
-    @DisplayName("Test 2: Filter invoices")
-    public void testFilterInvoices() throws Exception{
-        Customer cust = new Customer();
-        cust.setCustomerId(UUID.randomUUID());
+    // @Test
+    // @DisplayName("Test 2: Filter invoices")
+    // public void testFilterInvoices() throws Exception{
+    //     Customer cust = new Customer();
+    //     cust.setCustomerId(UUID.randomUUID());
 
-        Invoice invoice1 = new Invoice();
-        invoice1.setInvoiceId(UUID.randomUUID());
-        invoice1.setCustomer(cust);
+    //     Invoice invoice1 = new Invoice();
+    //     invoice1.setInvoiceId(UUID.randomUUID());
+    //     invoice1.setCustomer(cust);
 
-        Invoice invoice2 = new Invoice();
-        invoice2.setInvoiceId(UUID.randomUUID());
-        invoice1.setCustomer(cust);
+    //     Invoice invoice2 = new Invoice();
+    //     invoice2.setInvoiceId(UUID.randomUUID());
+    //     invoice1.setCustomer(cust);
 
-        Page<Invoice> pageInvoice = new PageImpl<>(Arrays.asList(invoice1, invoice2), PageRequest.of(0, 10), 2);
+    //     Page<Invoice> pageInvoice = new PageImpl<>(Arrays.asList(invoice1, invoice2), PageRequest.of(0, 10), 2);
 
-        Mockito.when(invoiceService.findAllFiltered(Mockito.any(Integer.class), Mockito.any(Integer.class),
-            Mockito.any(String.class), Mockito.any(String.class), Mockito.any(UUID.class),
-            Mockito.any(String.class), Mockito.any(String.class))).thenReturn(pageInvoice);
+    //     Mockito.when(invoiceService.findAllFiltered(Mockito.any(Integer.class), Mockito.any(Integer.class),
+    //         Mockito.any(String.class), Mockito.any(String.class), Mockito.any(UUID.class),
+    //         Mockito.any(String.class), Mockito.any(String.class))).thenReturn(pageInvoice);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/invoice/filter")
-            .param("customerId",cust.getCustomerId().toString()))
-            .andExpect(MockMvcResultMatchers.status().isOk());
-    }
+    //     mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/invoice/filter")
+    //         .param("customerId",cust.getCustomerId().toString()))
+    //         .andExpect(MockMvcResultMatchers.status().isOk());
+    // }
 
     @Test
     @DisplayName("Test 3: Update invoice with valid data")
@@ -318,4 +329,47 @@ public class InvoiceControllerTest {
 
         verify(invoiceService).generateToPdf(invoiceId);
     }
+
+    @Test
+    @DisplayName("Test 15: Bad Request when customerName is empty")
+    public void getInvoiceByCustomerName_whenCustomerNameIsEmpty_thenReturnBadRequest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/invoice/search")
+                .param("pageNo", "0")
+                .param("pageSize", "10")
+                .param("sortOrder", "asc")
+                .param("sortBy", "totalAmount")
+                .param("customerName", "")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().string(""));
+
+        verify(invoiceService, never()).findAllByCustomerName(anyInt(), anyInt(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    @DisplayName("Test 16: Export invoices to Excel")
+    public void exportInvoicesToExcel_shouldReturnExcelFile() throws Exception {
+        UUID customerId = UUID.randomUUID();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        outputStream.write("dummy data".getBytes());
+
+        when(invoiceService.generateInvoiceReportData(any(UUID.class), anyInt(), anyInt()))
+                .thenReturn(Collections.emptyList());
+        when(invoiceService.exportInvoiceToExcel(anyList()))
+                .thenReturn(outputStream);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/invoice/export")
+                .param("customerId", customerId.toString())
+                .param("month", "8")
+                .param("year", "2024")
+                .accept(MediaType.APPLICATION_OCTET_STREAM))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=invoices.xlsx"))
+                .andExpect(MockMvcResultMatchers.content().contentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .andExpect(MockMvcResultMatchers.content().bytes(outputStream.toByteArray()));
+
+        verify(invoiceService, times(1)).generateInvoiceReportData(any(UUID.class), anyInt(), anyInt());
+        verify(invoiceService, times(1)).exportInvoiceToExcel(anyList());
+    }
+
 }

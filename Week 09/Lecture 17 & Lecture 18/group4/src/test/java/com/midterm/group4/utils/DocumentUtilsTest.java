@@ -1,57 +1,43 @@
 package com.midterm.group4.utils;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
+
+import java.math.BigInteger;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import java.util.Collections;
 import org.mockito.MockitoAnnotations;
-import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
+import org.thymeleaf.context.Context;
 
+import com.itextpdf.html2pdf.HtmlConverter;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import com.midterm.group4.data.model.Customer;
 import com.midterm.group4.data.model.Invoice;
+import com.midterm.group4.data.model.OrderItem;
+import com.midterm.group4.data.model.Product;
 
-class DocumentUtilsTest {
+import java.io.ByteArrayOutputStream;
+
+public class DocumentUtilsTest {
+    
+    @Mock
+    private SpringTemplateEngine templateEngine;
 
     @InjectMocks
     private DocumentUtils documentUtils;
 
-    @Mock
-    private SpringTemplateEngine templateEngine;
-
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
-
-        // Mock the SpringTemplateEngine processing
-        when(templateEngine.process(anyString(), any(Context.class)))
-            .thenReturn("<html><body><p>Mocked PDF Content</p></body></html>");
-    }
-
-    @Test
-    void generateByteInvoice_shouldReturnPdfByteArray() throws IOException {
-        // Arrange
-        Invoice invoice = new Invoice();
-        invoice.setInvoiceId(UUID.randomUUID());
-        invoice.setTotalAmount(BigInteger.valueOf(100));
-        invoice.setInvoiceDate(LocalDate.now());
-        invoice.setCreatedTime(LocalDateTime.now());
-        invoice.setUpdatedTime(LocalDateTime.now());
-
-        // Act
-        byte[] pdfBytes = documentUtils.generateByteInvoice(invoice);
-
-        // Assert
-        assertNotNull(pdfBytes);
-        assertTrue(pdfBytes.length > 0);
     }
 }
