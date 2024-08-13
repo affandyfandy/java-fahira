@@ -9,12 +9,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.assignment1.writer.data.entity.Writer;
 import com.assignment1.writer.data.repository.WriterRepository;
+import com.assignment1.writer.exception.ObjectNotFoundException;
 
 @Service
 public class WriterServiceImpl implements WriterService {
 
-    @Autowired
-    private WriterRepository writerRepository;
+    private final WriterRepository writerRepository;
+
+    public WriterServiceImpl(WriterRepository writerRepository){
+        this.writerRepository = writerRepository;
+    }
 
     @Override
     @Transactional
@@ -29,10 +33,9 @@ public class WriterServiceImpl implements WriterService {
     }
 
     @Override
-    @Transactional
     public Writer findById(Integer id){
-        Optional<Writer> optWriter = writerRepository.findById(id);
-        return optWriter.get();
+        return writerRepository.findById(id)
+            .orElseThrow(() -> new ObjectNotFoundException(String.format("Writer with Id %s is not found", id)));
     }
     
 }

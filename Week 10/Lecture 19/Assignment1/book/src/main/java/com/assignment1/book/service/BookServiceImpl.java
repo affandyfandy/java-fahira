@@ -1,22 +1,28 @@
 package com.assignment1.book.service;
 
 import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.assignment1.book.data.entity.Book;
 import com.assignment1.book.data.repository.BookRepository;
+import com.assignment1.book.dto.ReadWriterDto;
+import com.assignment1.book.exception.ObjectNotFoundException;
 
 @Service
 public class BookServiceImpl implements BookService{
 
-    @Autowired
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
+    private final WebClient webClient;
+
+    public BookServiceImpl(BookRepository bookRepository, WebClient.Builder webClientBuilder) {
+        this.bookRepository = bookRepository;
+        this.webClient = webClientBuilder.baseUrl("http://localhost:8080").build();
+    }
 
     @Override
     public Book save(Book book) {
+        findWriterById(book.getWriterId());
         return bookRepository.save(book);
     }
 
@@ -27,8 +33,22 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public Book findById(Integer id) {
-        Optional<Book> findBook = bookRepository.findById(id);
-        return findBook.get();
+        return bookRepository.findById(id)
+            .orElseThrow(() -> new ObjectNotFoundException(String.format("Book with Id %s is not found", id)));
+    }
+
+    private ReadWriterDto findWriterById(Integer id) {
+        try{
+            return webClient
+                .get()
+                .uri("/api/v1/writer/{id}",id)
+                .retrieve()
+                .bodyToMono(ReadWriterDto.class)
+                .block();
+        }
+        catch (Exception e){
+            throw new ObjectNotFoundException(String.format("Writer with Id %s is not found", id));
+        }
     }
     
 }

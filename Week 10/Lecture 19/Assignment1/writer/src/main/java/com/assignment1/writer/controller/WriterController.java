@@ -46,8 +46,6 @@ public class WriterController {
     @GetMapping("/{id}")
     public ResponseEntity<ReadWriterDto> findById(@PathVariable("id") Integer id) {
         Writer findWriter = writerService.findById(id);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(writerMapper.toDto(findWriter));
+        return ResponseEntity.ok(writerMapper.toDto(findWriter));
     }
-    
-
 }
