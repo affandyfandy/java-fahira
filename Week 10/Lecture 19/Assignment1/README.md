@@ -14,7 +14,7 @@ Various API Gateways can be implemented in a Spring project, including Spring Cl
 - **`writer`**: Provides functionality related to writers. This module covers CRUD operations for writer entities.
 - **`api-gateway`**: Acts as the API gateway, handling routing and service discovery.
 
-Modules are automatically included in the [pom.xml](/pom.xml) located at the root directory:
+Modules are automatically included in the [pom.xml](/Week%2010/Lecture%2019/Assignment1/pom.xml) located at the root directory:
 
 
 ```xml
@@ -25,14 +25,14 @@ Modules are automatically included in the [pom.xml](/pom.xml) located at the roo
     </modules>
 ```
 
-While we are install the application in the root directory, it'll automatically install the modules included on the [pom.xml](/pom.xml).
+While we are install the application in the root directory, it'll automatically install the modules included on the [pom.xml](/Week%2010/Lecture%2019/Assignment1/pom.xml).
 
 ## Route
 
-To set up the API Gateway, configure routes in the [ApiGatewayApplication.java](/api-gateway/src/main/java/com/assignment1/api_gateway/ApiGatewayApplication.java) file:
+To set up the API Gateway, configure routes in the [ApiGatewayApplication.java](/Week%2010/Lecture%2019/Assignment1/api-gateway/src/main/java/com/assignment1/api_gateway/ApiGatewayApplication.java) file:
 
 ```java
-	@Bean
+@Bean
     public RouteLocator routerBuilder(RouteLocatorBuilder routeLocatorBuilder){ 
         return routeLocatorBuilder.routes() 
                         .route("Book",r->r.path("/api/v1/book/**") 
@@ -42,7 +42,7 @@ To set up the API Gateway, configure routes in the [ApiGatewayApplication.java](
     } 
 ```
 
-After setting up the gateway, create [application.yaml](api-gateway/src/main/resources/application.yaml) to set up the routing.
+After setting up the gateway, create [application.yaml](/Week%2010/Lecture%2019/Assignment1/api-gateway/src/main/resources/application.yaml) to set up the routing.
 
 ## Getting started
 
@@ -74,14 +74,14 @@ To build and run the project, follow these steps:
 
 ## Result
 
-### Retrieve all writers
-![res1.png](/image/Screen%20Shot%202024-08-13%20at%2010.36.35.png)
+### Post a writer
+![res1.png](/Week%2010/Lecture%2019/Assignment1/image/Screen%20Shot%202024-08-13%20at%2010.34.53.png)
 
 ### Retrieve all books
-![res2.png](/image/Screen%20Shot%202024-08-13%20at%2010.37.25.png)
+![res2.png](/Week%2010/Lecture%2019/Assignment1/image/Screen%20Shot%202024-08-13%20at%2010.37.25.png)
 
-### Post a writer
-![res3.png](/image/Screen%20Shot%202024-08-13%20at%2010.34.53.png)
+### Retrieve all writers
+![res3.png](/Week%2010/Lecture%2019/Assignment1/image/Screen%20Shot%202024-08-13%20at%2010.36.35.png)
 
 ### Post a book
-![res4.png](/image/Screen%20Shot%202024-08-13%20at%2013.30.06.png)
+![res4.png](/Week%2010/Lecture%2019/Assignment1/image/Screen%20Shot%202024-08-13%20at%2013.30.06.png)
