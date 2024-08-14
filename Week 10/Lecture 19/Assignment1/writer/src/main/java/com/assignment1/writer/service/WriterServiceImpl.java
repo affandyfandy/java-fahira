@@ -37,5 +37,16 @@ public class WriterServiceImpl implements WriterService {
         return writerRepository.findById(id)
             .orElseThrow(() -> new ObjectNotFoundException(String.format("Writer with Id %s is not found", id)));
     }
+
+    @Override
+    public Writer update(Integer id, Writer data) {
+        Writer findWriter = findById(id);
+        
+        findWriter.setDob(data.getDob() != null ? data.getDob() : findWriter.getDob());
+        findWriter.setLocation(data.getLocation() != null ? data.getLocation() : findWriter.getLocation());
+        findWriter.setName(data.getName() != null ? data.getName() : findWriter.getName());
+
+        return writerRepository.save(findWriter);
+    }
     
 }

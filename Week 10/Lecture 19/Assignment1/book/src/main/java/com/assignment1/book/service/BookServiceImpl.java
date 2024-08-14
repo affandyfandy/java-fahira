@@ -2,6 +2,7 @@ package com.assignment1.book.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.assignment1.book.data.entity.Book;
@@ -21,20 +22,53 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
+    @Transactional
     public Book save(Book book) {
         findWriterById(book.getWriterId());
         return bookRepository.save(book);
     }
 
     @Override
+    @Transactional
     public List<Book> findAll() {
         return bookRepository.findAll();
     }
 
     @Override
+    @Transactional
     public Book findById(Integer id) {
         return bookRepository.findById(id)
             .orElseThrow(() -> new ObjectNotFoundException(String.format("Book with Id %s is not found", id)));
+    }
+
+    @Override
+    @Transactional
+    public Book update(Integer id, Book book) {
+        Book findBook = findById(id);
+        
+        if (book.getWriterId() != null){
+            findWriterById(id);
+        }
+
+        findBook.setPublishedDate(book.getPublishedDate() != null ? book.getPublishedDate() : findBook.getPublishedDate());
+        findBook.setTitle(book.getTitle() != null ? book.getTitle() : findBook.getTitle());
+        findBook.setWriterId(book.getWriterId() != null ? book.getWriterId() : findBook.getWriterId());
+
+        return bookRepository.save(findBook);
+    }
+
+    @Override
+    @Transactional
+    public List<Book> search(String title, Integer writerId){
+        if (title.isBlank() && writerId != 0){
+            return bookRepository.findAllByWriterId(writerId);
+        } else if (!title.isBlank() && writerId == 0){
+            return bookRepository.findAllByTitle(title);
+        } else if (!title.isBlank() && writerId != 0){
+            return bookRepository.findAllByTitleAndWriterId(writerId, title);
+        } else{
+            return bookRepository.findAll();
+        }
     }
 
     private ReadWriterDto findWriterById(Integer id) {

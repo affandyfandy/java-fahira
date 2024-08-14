@@ -10,12 +10,15 @@ import com.assignment1.writer.dto.WriterMapper;
 import com.assignment1.writer.service.WriterService;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 @RestController
@@ -43,9 +46,15 @@ public class WriterController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(writerMapper.toListDto(listWriter));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ReadWriterDto> updateWriter(@PathVariable Integer id, @RequestBody Writer updatedWriter) {
+        Writer writer = writerService.update(id, updatedWriter);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(writerMapper.toDto(writer));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ReadWriterDto> findById(@PathVariable("id") Integer id) {
         Writer findWriter = writerService.findById(id);
-        return ResponseEntity.ok(writerMapper.toDto(findWriter));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(writerMapper.toDto(findWriter));
     }
 }

@@ -7,4 +7,5 @@ public interface WriterService {
     Writer save(Writer writer);
     List<Writer> findAll();
     Writer findById(Integer id);
+    Writer update(Integer id, Writer data);
 }

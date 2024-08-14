@@ -85,3 +85,12 @@ To build and run the project, follow these steps:
 
 ### Post a book
 ![res4.png](/Week%2010/Lecture%2019/Assignment1/image/Screen%20Shot%202024-08-13%20at%2013.30.06.png)
+
+### Search book
+![res5.png](/Week%2010/Lecture%2019/Assignment1/image/Screen%20Shot%202024-08-14%20at%2010.56.10.png)
+
+### Update writer
+![res6.png](/Week%2010/Lecture%2019/Assignment1/image/Screen%20Shot%202024-08-14%20at%2010.56.16.png)
+
+### Update book
+![res7.png](/Week%2010/Lecture%2019/Assignment1/image/Screen%20Shot%202024-08-14%20at%2010.56.25.png)
