@@ -1,18 +1,18 @@
 server:
   port: 8080
 spring:
+  application:
+    name: gateway
   cloud:
     gateway:
       default-filters:
         - name: ApiKeyGatewayFilter
-          
+    
       routes:
         - id: product-service
           uri: http://localhost:8081/
           predicates:
             - Path=/api/v1/product/**
-          filters:
-            - name: ApiKeyGatewayFilter
 
         - id: customer-service
           uri: http://localhost:8082/

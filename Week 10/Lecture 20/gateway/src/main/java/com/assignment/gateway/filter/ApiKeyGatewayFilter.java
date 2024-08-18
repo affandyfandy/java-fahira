@@ -3,48 +3,60 @@ package com.assignment.gateway.filter;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import reactor.core.publisher.Mono;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
 public class ApiKeyGatewayFilter extends AbstractGatewayFilterFactory<ApiKeyGatewayFilter.Config> {
-    
-    private WebClient webClient;
 
-    public ApiKeyGatewayFilter(WebClient.Builder webClientBuilder){
+    private static final Logger logger = LoggerFactory.getLogger(ApiKeyGatewayFilter.class);
+    
+    private RestTemplate restTemplate;
+
+    private static final String API_KEY = "api-key";
+
+    public ApiKeyGatewayFilter(RestTemplate restTemplate){
         super(Config.class);
-        this.webClient = webClientBuilder.build();
+        this.restTemplate = restTemplate;
     }
 
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             HttpHeaders header = exchange.getRequest().getHeaders();
-            String key = header.getFirst("api-key");
+            String key = header.getFirst(API_KEY);
+
+            logger.info("Received request for URI: {}", exchange.getRequest().getURI());
             
-            if (!header.containsKey("api-key") || key == null){
+            if (!header.containsKey(API_KEY) || key == null){
                 return onError(exchange, HttpStatus.UNAUTHORIZED);
             }
 
-            System.out.println("JEYYYY " + key);
+            try {
+                HttpHeaders requestHeaders = new HttpHeaders();
+                requestHeaders.set(API_KEY, key);
 
-            return webClient.get()
-                .uri("http://localhost:8083/api/v1/auth/validate?key=" + key)
-                .retrieve()
-                .bodyToMono(String.class)
-                .flatMap(response -> {
-                    if ("invalid".equals(response)){
-                        return onError(exchange, HttpStatus.UNAUTHORIZED);
-                    }
-                    return chain.filter(exchange);
-                })
-                .onErrorResume(throwable -> {
+                ResponseEntity<String> response = restTemplate.getForEntity(
+                        "http://localhost:8083/api/v1/auth/validate", String.class, requestHeaders);
+
+                if ("invalid".equals(response.getBody())) {
                     return onError(exchange, HttpStatus.UNAUTHORIZED);
-                });
+                }
+            } catch (HttpClientErrorException ex) {
+                logger.error("Error during API key validation: {}", ex.getMessage());
+                return onError(exchange, HttpStatus.UNAUTHORIZED);
+            }
+
+            return chain.filter(exchange);
         };
     }
 
