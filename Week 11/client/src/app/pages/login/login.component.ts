@@ -2,9 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -21,11 +20,10 @@ import { User } from '../../models/user.model';
 export class LoginComponent implements OnInit{
   username: string = '';
   password: string = '';
-  loggedUser?: User;
   message: string = '';
   isSuccess: boolean = false;
 
-  constructor (private userService: UserService){}
+  constructor (private userService: UserService, private router: Router){}
 
   ngOnInit(): void {
     this.login();
@@ -36,9 +34,10 @@ export class LoginComponent implements OnInit{
       next: (data) => {
         if (this.username && this.password){
           if (data){
-            this.loggedUser = data;
+            localStorage.setItem("loggedUser", data.username);
             this.message = "Login successful!";
             this.isSuccess = true;
+            this.router.navigate(['/product']);
           }
           else {
             this.message = "Login failed. Username and password didn't match.";

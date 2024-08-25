@@ -1,0 +1,26 @@
+<div class="container mt-5" *ngIf="viewMode">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">{{ currentProduct.name }}</h4>
+        </div>
+        <div class="card-body">
+          <p><strong>Quantity:</strong> {{ currentProduct.quantity }}</p>
+          <p><strong>Price:</strong> {{ currentProduct.price }}</p>
+          <div class="d-flex justify-content-center">
+            <button class="btn btn-primary" style="margin-right: 5px;" (click)="editProduct()">
+              Edit
+            </button>
+            <button class="btn btn-success" (click)="setProductStatus()">
+              {{ currentProduct.isactive ? 'Deactivate' : 'Activate' }}
+            </button>
+            <button class="btn btn-secondary ml-2" style="margin-left: 5px;" (click)="goBack()">
+              Back
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

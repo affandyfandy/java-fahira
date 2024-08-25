@@ -1,6 +1,35 @@
 {
   "user": [
-    { "id": "1", "username": "fahira17", "password": "fahira123412", "firstname": "Fahira", "lastname": "Adindian" },
-    { "id": "2", "username": "xman19", "password": "thisispass1231", "firstname": "Bonito", "lastname": "Lamongan" }
+    {
+      "id": "1",
+      "username": "fahira17",
+      "password": "fahira123412",
+      "firstname": "Fahira",
+      "lastname": "Adindian"
+    },
+    {
+      "id": "2",
+      "username": "xman19",
+      "password": "thisispass1231",
+      "firstname": "Bonito",
+      "lastname": "Lamongan"
+    }
+  ],
+  "product": [
+    {
+      "id": "1",
+      "name": "Macbook Air 2018",
+      "quantity": "10",
+      "price": "55000500",
+      "isactive": true
+    },
+    {
+      "id": "2",
+      "name": "Macbook Pro 2020",
+      "quantity": "20",
+      "price": "600000020",
+      "isactive": true,
+      "status": true
+    }
   ]
 }
