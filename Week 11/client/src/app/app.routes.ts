@@ -12,6 +12,10 @@ export const routes: Routes = [
     component: RouterConfig.LOGIN.component
   },
   {
+    path: RouterConfig.INVOICE.path,
+    component: RouterConfig.INVOICE.component
+  },
+  {
     path: RouterConfig.PRODUCT.path,
     loadChildren: () =>
       import('./pages/product/product.routes')

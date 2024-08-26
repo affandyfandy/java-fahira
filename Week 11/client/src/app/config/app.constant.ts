@@ -1,3 +1,4 @@
+import { InvoiceComponent } from "../pages/invoice/invoice.component";
 import { LoginComponent } from "../pages/login/login.component";
 
 export const AppConstants = {
@@ -12,6 +13,7 @@ export interface RouteLink {
 
 export const RouterConfig = {
   HOME: {path: '', link: '/'},
+  INVOICE: {path: 'invoice', link: '/invoice', component: InvoiceComponent},
   LOGIN: {path: 'login', link: '/login', component: LoginComponent},
   PRODUCT: {path: 'product', link: '/product'}
 }

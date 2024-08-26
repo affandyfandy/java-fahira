@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -15,53 +15,40 @@ import { CommonModule } from '@angular/common';
   styleUrl: './product-detail.component.scss'
 })
 export class ProductDetailComponent implements OnInit{
-  @Input() viewMode: boolean = false;
-  @Input() currentProduct: Product = {
-    id: 0,
-    name: '',
-    isactive: false,
-    quantity: 0,
-    price: 0
-  };
+  productId: number | undefined;
+  product: any;
 
   constructor(
-    private productService: ProductService,
-    private router: Router
-  ){}
+    private route: ActivatedRoute,
+    private productService: ProductService
+  ) {}
 
   ngOnInit(): void {
-    this.getProduct(this.currentProduct.id);
-  }
-
-  getProduct(id: number): void{
-    console.log("view mode get product " + this.viewMode);
-    this.productService.get(id).subscribe({
-      next: (data) => {
-        this.currentProduct = data;
-        console.log(data);
-      },
-      error: (e) => console.error(e)
+    this.route.paramMap.subscribe(params => {
+      this.productId = +params.get('id')!;
+      this.loadProduct();
     });
   }
 
-  editProduct(): void {
-    // Implement the edit logic here
+  loadProduct(): void {
+    if (this.productId !== undefined) {
+      this.productService.get(this.productId).subscribe(product => {
+        this.product = product;
+      });
+    }
   }
 
-  setProductStatus(): void {
-    const newStatus = !this.currentProduct.isactive;
-    this.productService.updateStatus(this.currentProduct.id, newStatus).subscribe({
-      next: (updatedProduct) => {
-        this.currentProduct = updatedProduct;
-        console.log(this.currentProduct.isactive);
-      },
-      error: (e) => console.error(e)
-    });
+  setStatus(isActive: boolean): void {
+    if (this.product) {
+      const updatedProduct = { ...this.product, isactive: !isActive };
+      this.productService.update(updatedProduct.id, updatedProduct).subscribe(
+        () => {
+          this.product = updatedProduct;
+        },
+        error => {
+          console.error('Error updating product status', error);
+        }
+      );
+    }
   }
-
-  goBack(): void {
-    this.viewMode = false;
-    console.log("view mode " + this.viewMode);
-  }
-
 }

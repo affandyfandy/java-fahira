@@ -3,30 +3,30 @@ import { Component, OnInit } from '@angular/core';
 import { ProductDetailComponent } from '../product-detail/product-detail.component';
 import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { InvoiceService } from '../../../services/invoice.service';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
   imports: [
     CommonModule,
-    ProductDetailComponent
+    ProductDetailComponent,
+    RouterLink
   ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss'
 })
 export class ProductListComponent implements OnInit{
   products? : Product[];
-  currentProduct: Product = {
-    id: 0,
-    name: '',
-    quantity: 0,
-    price: 0,
-    isactive: false
-  };
-  viewMode: boolean = false;
+  currentProduct?: Product;
+  // viewMode: boolean = false;
 
-  constructor(private productService: ProductService, private router: Router){}
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private invoiceService: InvoiceService
+  ){}
 
   ngOnInit(): void {
     if (typeof window !== 'undefined' && localStorage.getItem("loggedUser") !== null) {
@@ -45,17 +45,8 @@ export class ProductListComponent implements OnInit{
     });
   }
 
-  // setActiveProduct(product: Product, index: number): void{
-  //   this.currentProduct = product;
-  //   this.currentIndex = index;
-  //   console.log("current product " + this.currentProduct.id);
-  // }
-
-  showProductDetail(product: Product, index: number): void {
-    this.currentProduct = product;
-    this.currentProduct.id = index;
-    this.viewMode = true;
-    console.log("view mode detail " + this.viewMode);
+  checkout(product: Product){
+    this.invoiceService.addToInvoice(product);
   }
 
 }

@@ -1,24 +1,23 @@
-<div class="container mt-5" *ngIf="viewMode">
+<div class="container mt-5" *ngIf="product">
   <div class="row">
     <div class="col-md-8 offset-md-2">
-      <div class="card">
-        <div class="card-header">
-          <h4 class="card-title">{{ currentProduct.name }}</h4>
+      <div class="card position-relative">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="card-title mb-0">{{ product.name }}</h4>
+          <span class="badge"
+                [ngClass]="{ 'bg-success': product.isactive, 'bg-danger': !product.isactive }">
+            {{ product.isactive ? 'Active' : 'Inactive' }}
+          </span>
         </div>
-        <div class="card-body">
-          <p><strong>Quantity:</strong> {{ currentProduct.quantity }}</p>
-          <p><strong>Price:</strong> {{ currentProduct.price }}</p>
-          <div class="d-flex justify-content-center">
-            <button class="btn btn-primary" style="margin-right: 5px;" (click)="editProduct()">
-              Edit
-            </button>
-            <button class="btn btn-success" (click)="setProductStatus()">
-              {{ currentProduct.isactive ? 'Deactivate' : 'Activate' }}
-            </button>
-            <button class="btn btn-secondary ml-2" style="margin-left: 5px;" (click)="goBack()">
-              Back
-            </button>
+        <div class="card-body d-flex flex-column align-items-center">
+          <div class="product-upper">
+            <img [src]="product.picture" alt="{{ product.name }}" class="img-fluid">
           </div>
+          <p>Quantity: {{ product.quantity }}</p>
+          <p>Price: {{ product.price | currency:'IDR' }}</p>
+          <button class="btn btn-primary" (click)="setStatus(product.isactive)">
+            {{ product.isactive ? 'Deactivate' : 'Activate' }}
+          </button>
         </div>
       </div>
     </div>

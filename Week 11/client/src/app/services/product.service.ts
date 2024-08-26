@@ -27,9 +27,4 @@ export class ProductService{
   update(id: number, data: any): Observable<any> {
     return this.http.put(`${baseUrl}/${id}`, data);
   }
-
-  updateStatus(id: number, isactive: boolean): Observable<any> {
-    return this.http.patch<Product>(`${baseUrl}/${id}`, { isactive });
-  }
-
 }

@@ -142,3 +142,11 @@ export class LoginComponent {
 ### Best Practice
 
 Standalone components in Angular offer several advantages and are particularly useful in specific scenarios, such as standalone components bring a simplified approach to Angular development, self-contained units of functionality that can be easily reused across different parts of an application, reduce dependencies between components and modules, isolating features or functionality, and easier to adapt or change individual components without impacting the overall system.
+
+# Lecture 22
+
+## Product List page
+[list.png](/Week%2011/img/Screen%20Shot%202024-08-26%20at%2023.06.29.png)
+
+## Product Detail page
+[list.png](/Week%2011/img/Screen%20Shot%202024-08-26%20at%2023.06.37.png)

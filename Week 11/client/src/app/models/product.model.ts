@@ -1,7 +1,8 @@
-export interface Product{
-  id: number
-  name: string
-  quantity: number
-  price: number
-  isactive: boolean
+export class Product{
+  id!: number;
+  name!: string;
+  quantity!: number;
+  price!: number;
+  isactive!: boolean;
+  picture?: string;
 }
