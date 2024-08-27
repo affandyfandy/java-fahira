@@ -1,0 +1,25 @@
+<div class="container mt-5" *ngIf="product">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+      <div class="card position-relative">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4 class="card-title mb-0">{{ product.name }}</h4>
+          <span class="badge"
+                [ngClass]="{ 'bg-success': product.isactive, 'bg-danger': !product.isactive }">
+            {{ product.isactive ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+        <div class="card-body d-flex flex-column align-items-center">
+          <div class="product-upper">
+            <img [src]="product.picture" alt="{{ product.name }}" class="img-fluid">
+          </div>
+          <p>Quantity: {{ product.quantity }}</p>
+          <p>Price: {{ product.price | currency:'IDR' }}</p>
+          <button class="btn btn-primary" (click)="setStatus(product.isactive)">
+            {{ product.isactive ? 'Deactivate' : 'Activate' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

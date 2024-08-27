@@ -1,0 +1,68 @@
+{
+  "user": [
+    {
+      "id": "1",
+      "username": "fahira17",
+      "password": "fahira123412",
+      "firstname": "Fahira",
+      "lastname": "Adindian"
+    },
+    {
+      "id": "2",
+      "username": "xman19",
+      "password": "thisispass1231",
+      "firstname": "Bonito",
+      "lastname": "Lamongan"
+    }
+  ],
+  "product": [
+    {
+      "id": "1",
+      "name": "Nike InfinityRN 4",
+      "quantity": "10",
+      "price": "1988000",
+      "isactive": false,
+      "picture": "../../assets/img/brand1.png"
+    },
+    {
+      "id": "2",
+      "name": "Nike Invincible 3",
+      "quantity": "20",
+      "price": "2278000",
+      "isactive": false,
+      "picture": "../../assets/img/brand2.png"
+    },
+    {
+      "id": "3",
+      "name": "Nike Winflo 11",
+      "quantity": "20",
+      "price": "1238000",
+      "isactive": true,
+      "picture": "../../assets/img/brand3.png"
+    },
+    {
+      "id": "4",
+      "name": "On Cloud 5",
+      "quantity": "20",
+      "price": "2400000",
+      "isactive": true,
+      "picture": "../../assets/img/brand4.png"
+    },
+    {
+      "id": "5",
+      "name": "Cloudmonster Hyper ",
+      "quantity": "10",
+      "price": "3700000",
+      "isactive": false,
+      "picture": "../../assets/img/brand5.png"
+    },
+    {
+      "id": "6",
+      "name": "New Balance 998",
+      "quantity": "6",
+      "price": "3700000",
+      "isactive": false,
+      "picture": "../../assets/img/brand6.png"
+    }
+  ]
+}
