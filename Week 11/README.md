@@ -145,8 +145,16 @@ Standalone components in Angular offer several advantages and are particularly u
 
 # Lecture 22
 
+In this assignment, we designed the three main pages for product management, they are:
+1. Login
+2. Product list, a page to show list of products
+3. Product detail, a page to show detail of the product
+
+## Login page
+![login.png](/Week%2011/img/Screen%20Shot%202024-08-27%20at%2018.28.22.png)
+
 ## Product List page
-[list.png](/Week%2011/img/Screen%20Shot%202024-08-26%20at%2023.06.29.png)
+![list.png](/Week%2011/img/Screen%20Shot%202024-08-27%20at%2018.28.50.png)
 
 ## Product Detail page
-[list.png](/Week%2011/img/Screen%20Shot%202024-08-26%20at%2023.06.37.png)
+![detail.png](/Week%2011/img/Screen%20Shot%202024-08-27%20at%2018.28.57.png)
